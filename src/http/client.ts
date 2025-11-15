@@ -20,7 +20,7 @@ export function getHttpClient(): AxiosInstance {
       // Get Telegram init data from window if available
       const initData = (window as any).Telegram?.WebApp?.initData;
       if (initData) {
-        config.headers['X-Telegram-Init-Data'] = initData;
+        config.headers['x-telegram-init-data'] = initData;
       }
       return config;
     },

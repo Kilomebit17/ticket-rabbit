@@ -7,26 +7,52 @@ import Dashboard from './screens/Dashboard';
 import Userboard from './screens/Userboard';
 import Profile from './screens/Profile';
 import FriendDetail from './screens/FriendDetail';
+import TryAgain from './screens/TryAgain';
 import Layout from './components/Layout';
+import { useEffect } from 'react';
+import { isTelegramWebApp } from './utils/telegram';
 
 /**
  * Main app content component that uses auth context
  */
 const AppContent = (): JSX.Element => {
+  const isTelegram = isTelegramWebApp();
+
   // Initialize Telegram WebApp (expands and calls ready automatically)
+  // Hook is safe to call even if not in Telegram (it handles the check internally)
   useTelegramWebApp();
-  
-  const { state } = useAuth();
+
+  const { state, checkUser } = useAuth();
+
+  useEffect(() => {
+    if (isTelegram) {
+      checkUser();
+    }
+  }, [isTelegram, checkUser]);
+
+  // Check if running in Telegram WebApp early
+  if (!isTelegram) {
+    return (
+      <Router>
+        <Routes>
+          <Route path="/try-again" element={<TryAgain />} />
+          <Route path="*" element={<Navigate to="/try-again" replace />} />
+        </Routes>
+      </Router>
+    );
+  }
 
   if (state.isLoading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontSize: '1.2rem'
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          fontSize: '1.2rem',
+        }}
+      >
         Loading...
       </div>
     );

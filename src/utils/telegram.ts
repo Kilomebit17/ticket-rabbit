@@ -6,17 +6,22 @@ import type { WebApp } from 'telegram-web-app';
 
 /**
  * Checks if the app is running inside Telegram WebApp
+ * Verifies that Telegram WebApp is actually initialized (not just the object exists)
  * @returns true if running in Telegram WebApp, false otherwise
  */
 export const isTelegramWebApp = (): boolean => {
-  if (typeof window === 'undefined') {
+  const telegram = (window as any).Telegram;
+  const webApp = telegram?.WebApp;
+
+  // Check if Telegram WebApp object exists
+  if (!webApp) {
     return false;
   }
 
-  return (
-    typeof (window as any).Telegram !== 'undefined' &&
-    typeof (window as any).Telegram?.WebApp !== 'undefined'
-  );
+  // Verify it's actually a Telegram environment by checking for properties
+  // that are only present when running in real Telegram WebApp
+  // initData or platform are reliable indicators of a real Telegram environment
+  return webApp.initData
 };
 
 /**
