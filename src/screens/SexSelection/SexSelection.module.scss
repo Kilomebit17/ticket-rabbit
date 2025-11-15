@@ -1,0 +1,125 @@
+@use '../../styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, $primary-light 0%, $secondary-color 100%);
+}
+
+.content {
+  background-color: $surface;
+  border-radius: $radius-xl;
+  padding: $spacing-xl;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: $shadow-lg;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: $text-primary;
+  text-align: center;
+  margin-bottom: $spacing-sm;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: $text-secondary;
+  text-align: center;
+  margin-bottom: $spacing-xl;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.nameInput {
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: $spacing-md;
+  border: 2px solid $border-color;
+  border-radius: $radius-md;
+  font-size: 16px;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: $primary-color;
+  }
+}
+
+.sexOptions {
+  display: flex;
+  gap: $spacing-md;
+  width: 100%;
+}
+
+.sexButton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-lg;
+  border: 2px solid $border-color;
+  border-radius: $radius-lg;
+  background-color: $surface;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    transform: translateY(-2px);
+  }
+
+  &.selected {
+    border-color: $primary-color;
+    background-color: rgba($primary-color, 0.1);
+  }
+}
+
+.emoji {
+  font-size: 48px;
+}
+
+.label {
+  font-size: 18px;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.error {
+  color: $error-color;
+  font-size: 14px;
+  text-align: center;
+  padding: $spacing-sm;
+  background-color: rgba($error-color, 0.1);
+  border-radius: $radius-sm;
+}
+
+.submitButton {
+  width: 100%;
+  padding: $spacing-md;
+  background-color: $primary-color;
+  color: white;
+  border-radius: $radius-md;
+  font-size: 18px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $primary-dark;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+

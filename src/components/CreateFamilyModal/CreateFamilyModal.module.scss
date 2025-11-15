@@ -1,0 +1,159 @@
+@use '../../styles/variables.scss' as *;
+@use 'sass:color';
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-md;
+}
+
+.modal {
+  background-color: $surface;
+  border-radius: $radius-lg;
+  width: 100%;
+  max-width: 500px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: $shadow-lg;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $border-color;
+
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: $text-primary;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: $text-secondary;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: $text-primary;
+  }
+}
+
+.searchSection {
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $border-color;
+}
+
+.searchInput {
+  width: 100%;
+  padding: $spacing-md;
+  border: 2px solid $border-color;
+  border-radius: $radius-md;
+  font-size: 16px;
+
+  &:focus {
+    border-color: $primary-color;
+  }
+}
+
+.usersList {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-md;
+}
+
+.noUsers {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $text-secondary;
+}
+
+.userItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-sm;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.userEmoji {
+  font-size: 32px;
+}
+
+.userName {
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.userSex {
+  font-size: 14px;
+  color: $text-secondary;
+  text-transform: capitalize;
+}
+
+.userActions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.sendButton {
+  padding: $spacing-sm $spacing-md;
+  background-color: $primary-color;
+  color: white;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: $primary-dark;
+  }
+}
+
+.acceptButton {
+  padding: $spacing-sm $spacing-md;
+  background-color: $success-color;
+  color: white;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: color.scale($success-color, $lightness: -10%);
+  }
+}
+
+.requestSent {
+  padding: $spacing-sm $spacing-md;
+  color: $text-secondary;
+  font-size: 14px;
+}
+

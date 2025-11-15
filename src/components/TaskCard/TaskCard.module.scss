@@ -1,0 +1,129 @@
+@use '../../styles/variables.scss' as *;
+@use 'sass:color';
+
+.taskCard {
+  background-color: $surface;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-sm;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+}
+
+.taskName {
+  font-size: 18px;
+  font-weight: 600;
+  color: $text-primary;
+  flex: 1;
+}
+
+.price {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 18px;
+  font-weight: 600;
+  color: $primary-color;
+}
+
+.ticketIcon {
+  font-size: 20px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-md;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.label {
+  color: $text-secondary;
+  font-weight: 500;
+}
+
+.status {
+  font-weight: 600;
+  padding: 2px $spacing-sm;
+  border-radius: $radius-sm;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.statusCreated {
+  background-color: rgba($primary-color, 0.1);
+  color: $primary-color;
+}
+
+.statusPending {
+  background-color: rgba($warning-color, 0.1);
+  color: $warning-color;
+}
+
+.statusApproved {
+  background-color: rgba($success-color, 0.1);
+  color: $success-color;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-color;
+}
+
+.solveButton {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  background-color: $primary-color;
+  color: white;
+  border-radius: $radius-md;
+  font-size: 14px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: $primary-dark;
+  }
+}
+
+.approveButton {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  background-color: $success-color;
+  color: white;
+  border-radius: $radius-md;
+  font-size: 14px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: color.scale($success-color, $lightness: -10%);
+  }
+}
+
+.approvedBadge {
+  flex: 1;
+  text-align: center;
+  padding: $spacing-sm $spacing-md;
+  color: $success-color;
+  font-weight: 600;
+  font-size: 14px;
+}
+

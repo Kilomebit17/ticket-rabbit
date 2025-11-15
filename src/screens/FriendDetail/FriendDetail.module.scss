@@ -1,0 +1,153 @@
+@use '../../styles/variables.scss' as *;
+@use 'sass:color';
+
+.friendDetail {
+  width: 100%;
+}
+
+.notFound {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $text-secondary;
+}
+
+.header {
+  margin-bottom: $spacing-lg;
+}
+
+.backButton {
+  padding: $spacing-sm $spacing-md;
+  background-color: $border-color;
+  color: $text-primary;
+  border-radius: $radius-md;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: color.scale($border-color, $lightness: -10%);
+  }
+}
+
+.profileSection {
+  text-align: center;
+  margin-bottom: $spacing-xl;
+  padding: $spacing-xl;
+  background-color: $surface;
+  border-radius: $radius-lg;
+  border: 1px solid $border-color;
+  box-shadow: $shadow-sm;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba($primary-color, 0.1);
+  border-radius: 50%;
+  margin: 0 auto $spacing-md;
+}
+
+.emoji {
+  font-size: 64px;
+}
+
+.name {
+  font-size: 28px;
+  font-weight: 700;
+  color: $text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.balance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  font-size: 24px;
+  font-weight: 600;
+  color: $primary-color;
+}
+
+.ticketIcon {
+  font-size: 28px;
+}
+
+.balanceAmount {
+  min-width: 40px;
+}
+
+.section {
+  margin-bottom: $spacing-xl;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.infoCard {
+  background-color: $surface;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.label {
+  color: $text-secondary;
+  font-weight: 500;
+}
+
+.value {
+  color: $text-primary;
+  font-weight: 600;
+}
+
+.balanceValue {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: $primary-color;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.familyCard {
+  background-color: $surface;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+}
+
+.familyInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.noFamily {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $text-secondary;
+  background-color: $surface;
+  border-radius: $radius-lg;
+  border: 1px solid $border-color;
+}
+

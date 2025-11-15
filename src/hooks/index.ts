@@ -1,0 +1,2 @@
+export { useTelegramWebApp } from './useTelegramWebApp';
+

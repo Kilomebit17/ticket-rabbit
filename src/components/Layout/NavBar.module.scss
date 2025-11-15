@@ -1,0 +1,47 @@
+@use '../../styles/variables.scss' as *;
+
+.navBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: $surface;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  border-top: 1px solid $border-color;
+}
+
+.navBar a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  color: $text-secondary;
+  transition: color 0.2s ease;
+  text-decoration: none;
+  border-radius: $radius-md;
+}
+
+.navBar a:hover {
+  color: $primary-color;
+}
+
+.navBar a.active {
+  color: $primary-color;
+  background-color: rgba($primary-color, 0.1);
+}
+
+.icon {
+  font-size: 24px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 500;
+}
+
