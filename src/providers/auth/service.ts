@@ -10,7 +10,6 @@ import { EAuthActionType } from './types';
 import initialState from './state';
 import { reducer } from './reducer';
 import { useHttpClient } from '@/providers/http-client';
-import { getTelegramWebApp } from '@/utils/telegram';
 
 /**
  * Check if error is a 404 Not Found error
