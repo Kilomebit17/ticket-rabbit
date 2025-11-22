@@ -13,17 +13,43 @@
   justify-content: center;
   z-index: 1000;
   padding: $spacing-md;
+  animation: fadeIn 0.2s ease-out;
+  backdrop-filter: blur(4px);
 }
 
 .modal {
   background-color: $surface;
-  border-radius: $radius-lg;
+  border-radius: $radius-xl;
   width: 100%;
   max-width: 500px;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: $shadow-lg;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .header {
@@ -32,11 +58,18 @@
   align-items: center;
   padding: $spacing-lg;
   border-bottom: 1px solid $border-color;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 1) 100%);
 
   h3 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 600;
-    color: $text-primary;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 }
 
@@ -48,13 +81,28 @@
   cursor: pointer;
   line-height: 1;
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: $radius-md;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 
   &:hover {
+    color: $text-primary;
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
     color: $text-primary;
   }
 }
@@ -62,17 +110,34 @@
 .searchSection {
   padding: $spacing-md $spacing-lg;
   border-bottom: 1px solid $border-color;
+  background-color: rgba(249, 250, 251, 0.5);
 }
 
 .searchInput {
   width: 100%;
-  padding: $spacing-md;
+  padding: $spacing-md $spacing-lg;
   border: 2px solid $border-color;
   border-radius: $radius-md;
   font-size: 16px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: $surface;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    border-color: color.scale($border-color, $lightness: -10%);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  }
 
   &:focus {
+    outline: none;
     border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1),
+      0 2px 4px 0 rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+  }
+
+  &::placeholder {
+    color: color.scale($text-secondary, $lightness: 20%);
   }
 }
 
@@ -80,74 +145,234 @@
   flex: 1;
   overflow-y: auto;
   padding: $spacing-md;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
 }
 
 .noUsers {
   text-align: center;
   padding: $spacing-xl;
   color: $text-secondary;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .userItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $spacing-md;
+  padding: $spacing-md $spacing-lg;
   border: 1px solid $border-color;
   border-radius: $radius-md;
   margin-bottom: $spacing-sm;
+  background-color: $surface;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+  animation: slideIn 0.3s ease-out backwards;
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.03}s;
+    }
+  }
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(249, 250, 251, 1) 100%
+    );
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .userInfo {
   display: flex;
   align-items: center;
   gap: $spacing-md;
+  flex: 1;
 }
 
 .userEmoji {
   font-size: 32px;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+}
+
+.userItem:hover .userEmoji {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .userName {
   font-weight: 600;
   color: $text-primary;
   margin-bottom: $spacing-xs;
+  letter-spacing: -0.01em;
+  transition: color 0.2s;
+}
+
+.userItem:hover .userName {
+  color: $primary-color;
 }
 
 .userSex {
   font-size: 14px;
   color: $text-secondary;
   text-transform: capitalize;
+  transition: color 0.2s;
 }
 
 .userActions {
   display: flex;
   gap: $spacing-sm;
+  align-items: center;
 }
 
 .sendButton {
-  padding: $spacing-sm $spacing-md;
-  background-color: $primary-color;
+  padding: $spacing-md $spacing-lg;
+  background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
   color: white;
-  border-radius: $radius-sm;
-  font-size: 14px;
+  border: none;
+  border-radius: $radius-md;
+  font-size: 15px;
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
 
   &:hover {
-    background-color: $primary-dark;
+    background: linear-gradient(135deg, $primary-dark 0%, $primary-color 100%);
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+    transform: translateY(-1px);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2),
+      0 4px 8px rgba(99, 102, 241, 0.3);
   }
 }
 
 .acceptButton {
   padding: $spacing-sm $spacing-md;
-  background-color: $success-color;
+  background: linear-gradient(
+    135deg,
+    $success-color 0%,
+    color.scale($success-color, $lightness: -10%) 100%
+  );
   color: white;
-  border-radius: $radius-sm;
+  border: none;
+  border-radius: $radius-md;
   font-size: 14px;
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
 
   &:hover {
-    background-color: color.scale($success-color, $lightness: -10%);
+    background: linear-gradient(
+      135deg,
+      color.scale($success-color, $lightness: -10%) 0%,
+      $success-color 100%
+    );
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+    transform: translateY(-1px);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $success-color;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2),
+      0 4px 8px rgba(16, 185, 129, 0.3);
   }
 }
 
@@ -155,5 +380,15 @@
   padding: $spacing-sm $spacing-md;
   color: $text-secondary;
   font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &::before {
+    content: '✓';
+    color: $success-color;
+    font-weight: bold;
+  }
 }
 

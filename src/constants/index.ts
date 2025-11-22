@@ -94,9 +94,9 @@ export const CREATE_TASK_TEXT = {
 // UI Text - CreateFamilyModal
 export const CREATE_FAMILY_TEXT = {
   TITLE: 'Create Family',
-  PLACEHOLDER_SEARCH: 'Search users...',
+  PLACEHOLDER_SEARCH: 'Write username like @kilomebit',
   NO_USERS: 'No users found',
-  BUTTON_SEND_REQUEST: 'Send Request',
+  BUTTON_SEND_REQUEST: 'Send Invite',
   BUTTON_ACCEPT_REQUEST: 'Accept Request',
   REQUEST_SENT: 'Request Sent',
   ALERT_REQUEST_EXISTS: 'Request already sent',
@@ -121,6 +121,12 @@ export const DASHBOARD_TEXT = {
   STAT_COMPLETED: 'Completed',
   STAT_PENDING: 'Pending',
   LOADING: 'Loading...',
+  INVITES_TITLE: 'Family Invites',
+  INVITES_SUBTITLE: 'You have pending family invitations',
+  NO_INVITES: 'No pending invites',
+  INVITE_FROM: 'Invite from',
+  BUTTON_ACCEPT: 'Accept',
+  BUTTON_REJECT: 'Reject',
 } as const;
 
 // UI Text - TaskCard
@@ -141,6 +147,10 @@ export const TASK_CARD_TEXT = {
 export const ERROR_MESSAGES = {
   FAILED_TO_CHECK_USER: 'Failed to check user',
   FAILED_TO_CREATE_USER: 'Failed to create user',
+  FAILED_TO_SEARCH_USERS: 'Failed to search users',
+  FAILED_TO_SEND_INVITE: 'Failed to send invite',
+  FAILED_TO_GET_INVITES: 'Failed to get invites',
+  FAILED_TO_RESPOND_INVITE: 'Failed to respond to invite',
 } as const;
 
 // Console Log Messages

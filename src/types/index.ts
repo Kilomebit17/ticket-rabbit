@@ -36,3 +36,12 @@ export interface FamilyRequest {
   createdAt: number;
 }
 
+export interface FamilyInvite {
+  id: string;
+  fromUserId: string;
+  toUserId: string;
+  fromUser?: User;
+  status: 'pending' | 'accepted' | 'rejected';
+  createdAt: number;
+}
+

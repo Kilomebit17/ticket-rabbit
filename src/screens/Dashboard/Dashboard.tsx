@@ -2,19 +2,21 @@ import { useState, useEffect } from 'react';
 import { generateId } from '@/utils/helpers';
 import { Family, Task, User } from '@/types';
 import { useCurrentUser } from '@/providers/auth';
+import { useFamilyInvites } from '@/providers/family-invites';
 import CreateFamilyModal from '@/components/CreateFamilyModal';
 import CreateTaskModal from '@/components/CreateTaskModal';
 import TaskCard from '@/components/TaskCard';
+import PendingInvites from '@/components/PendingInvites';
+import FamilyCard from '@/components/FamilyCard';
 import {
   DASHBOARD_TEXT,
   TASK_STATUS,
-  SEX_VALUES,
-  SEX_EMOJIS,
 } from '@/constants';
 import styles from './Dashboard.module.scss';
 
 const Dashboard = (): JSX.Element => {
   const currentUser = useCurrentUser();
+  const { state: invitesState, getInvites, respondToInvite } = useFamilyInvites();
   const [family, setFamily] = useState<Family | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [showCreateFamily, setShowCreateFamily] = useState(false);
@@ -23,6 +25,13 @@ const Dashboard = (): JSX.Element => {
 
   useEffect(() => {
     if (currentUser) {
+      // Load family invites
+      if (!family) {
+        getInvites().catch((error) => {
+          console.error('Failed to load invites:', error);
+        });
+      }
+
       // TEMP: Replace with API call
       const userFamily: Family | null = null; // storage.getFamilyByUserId(currentUser.id);
       setFamily(userFamily || null);
@@ -41,7 +50,7 @@ const Dashboard = (): JSX.Element => {
         }
       }
     }
-  }, [currentUser]);
+  }, [currentUser, family, getInvites]);
 
   const handleCreateFamily = () => {
     setShowCreateFamily(true);
@@ -56,6 +65,32 @@ const Dashboard = (): JSX.Element => {
       // TEMP: Replace with API call
       const member = null; // storage.getUserById(otherMemberId);
       setFamilyMember(member);
+    }
+  };
+
+  const handleAcceptInvite = async (inviteId: string): Promise<void> => {
+    if (!currentUser) return;
+
+    try {
+      const response = await respondToInvite(inviteId, true);
+      if (response.family) {
+        setFamily(response.family);
+        // Refresh invites after accepting
+        await getInvites();
+      }
+    } catch (error) {
+      console.error('Failed to accept invite:', error);
+      alert('Failed to accept invite. Please try again.');
+    }
+  };
+
+  const handleRejectInvite = async (inviteId: string): Promise<void> => {
+    try {
+      await respondToInvite(inviteId, false);
+      // Invites list will be updated automatically by the reducer
+    } catch (error) {
+      console.error('Failed to reject invite:', error);
+      alert('Failed to reject invite. Please try again.');
     }
   };
 
@@ -133,16 +168,29 @@ const Dashboard = (): JSX.Element => {
     return <div>{DASHBOARD_TEXT.LOADING}</div>;
   }
 
+  const pendingInvites = invitesState.invites.filter(
+    (invite) => invite.status === 'pending' && invite.toUserId === currentUser?.id
+  );
+
   return (
     <div className={styles.dashboard}>
       {!family ? (
-        <div className={styles.noFamily}>
-          <h2 className={styles.title}>{DASHBOARD_TEXT.WELCOME_TITLE(currentUser.name)}</h2>
-          <p className={styles.subtitle}>{DASHBOARD_TEXT.SUBTITLE_NO_FAMILY}</p>
-          <button onClick={handleCreateFamily} className={styles.createFamilyButton}>
-            {DASHBOARD_TEXT.BUTTON_CREATE_FAMILY}
-          </button>
-        </div>
+        <>
+          <PendingInvites
+            invites={pendingInvites}
+            isLoading={invitesState.isLoading}
+            onAccept={handleAcceptInvite}
+            onReject={handleRejectInvite}
+          />
+
+          <div className={styles.noFamily}>
+            <h2 className={styles.title}>{DASHBOARD_TEXT.WELCOME_TITLE(currentUser.name)}</h2>
+            <p className={styles.subtitle}>{DASHBOARD_TEXT.SUBTITLE_NO_FAMILY}</p>
+            <button onClick={handleCreateFamily} className={styles.createFamilyButton}>
+              {DASHBOARD_TEXT.BUTTON_CREATE_FAMILY}
+            </button>
+          </div>
+        </>
       ) : (
         <>
           <div className={styles.header}>
@@ -150,63 +198,11 @@ const Dashboard = (): JSX.Element => {
           </div>
 
           {familyMember && (
-            <div className={styles.familyCard}>
-              <div className={styles.familyCardHeader}>
-                <div className={styles.familyIcon}>👨‍👩‍👧‍👦</div>
-                <div className={styles.familyTitle}>
-                  <h3 className={styles.familyName}>{DASHBOARD_TEXT.FAMILY_TITLE}</h3>
-                  <p className={styles.familySubtitle}>{DASHBOARD_TEXT.FAMILY_SUBTITLE}</p>
-                </div>
-              </div>
-              <div className={styles.familyMembers}>
-                <div className={styles.member}>
-                  <div className={styles.memberAvatar}>
-                    <span>{currentUser.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}</span>
-                  </div>
-                  <div className={styles.memberInfo}>
-                    <span className={styles.memberName}>{currentUser.name}</span>
-                    <span className={styles.memberRole}>{DASHBOARD_TEXT.MEMBER_ROLE_YOU}</span>
-                  </div>
-                  <div className={styles.memberBalance}>
-                    <span className={styles.ticketIcon}>🎫</span>
-                    <span>{currentUser.balance}</span>
-                  </div>
-                </div>
-                <div className={styles.member}>
-                  <div className={styles.memberAvatar}>
-                    <span>{familyMember.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}</span>
-                  </div>
-                  <div className={styles.memberInfo}>
-                    <span className={styles.memberName}>{familyMember.name}</span>
-                    <span className={styles.memberRole}>{DASHBOARD_TEXT.MEMBER_ROLE_PARTNER}</span>
-                  </div>
-                  <div className={styles.memberBalance}>
-                    <span className={styles.ticketIcon}>🎫</span>
-                    <span>{familyMember.balance}</span>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.familyStats}>
-                <div className={styles.stat}>
-                  <span className={styles.statValue}>{tasks.length}</span>
-                  <span className={styles.statLabel}>{DASHBOARD_TEXT.STAT_TOTAL_TASKS}</span>
-                </div>
-                <div className={styles.statDivider}></div>
-                <div className={styles.stat}>
-                  <span className={styles.statValue}>
-                    {tasks.filter(t => t.status === TASK_STATUS.APPROVED).length}
-                  </span>
-                  <span className={styles.statLabel}>{DASHBOARD_TEXT.STAT_COMPLETED}</span>
-                </div>
-                <div className={styles.statDivider}></div>
-                <div className={styles.stat}>
-                  <span className={styles.statValue}>
-                    {tasks.filter(t => t.status === TASK_STATUS.PENDING).length}
-                  </span>
-                  <span className={styles.statLabel}>{DASHBOARD_TEXT.STAT_PENDING}</span>
-                </div>
-              </div>
-            </div>
+            <FamilyCard
+              currentUser={currentUser}
+              familyMember={familyMember}
+              tasks={tasks}
+            />
           )}
 
           <button onClick={() => setShowCreateTask(true)} className={styles.createTaskButton}>

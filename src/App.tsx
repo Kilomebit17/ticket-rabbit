@@ -11,6 +11,8 @@ import {
   useCurrentUser,
   useAuthLoading,
 } from "@/providers/auth";
+import { UsersProvider } from "@/providers/users";
+import { FamilyInvitesProvider } from "@/providers/family-invites";
 import { useTelegramWebApp } from "@/hooks";
 import { PROJECT_NAME } from "@/constants";
 import SexSelection from "./screens/SexSelection";
@@ -100,7 +102,11 @@ function App(): JSX.Element {
   return (
     <HttpClientProvider>
       <AuthProvider>
-        <AppContent />
+        <UsersProvider>
+          <FamilyInvitesProvider>
+            <AppContent />
+          </FamilyInvitesProvider>
+        </UsersProvider>
       </AuthProvider>
     </HttpClientProvider>
   );
