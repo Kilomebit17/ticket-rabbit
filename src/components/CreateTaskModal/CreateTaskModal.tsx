@@ -9,7 +9,7 @@ interface CreateTaskModalProps {
 
 const CreateTaskModal = ({ onClose, onCreate }: CreateTaskModalProps) => {
   const [taskName, setTaskName] = useState('');
-  const [price, setPrice] = useState(DEFAULTS.TASK_PRICE);
+  const [price, setPrice] = useState<number>(DEFAULTS.TASK_PRICE);
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {

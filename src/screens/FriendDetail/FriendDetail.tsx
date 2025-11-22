@@ -20,14 +20,16 @@ const FriendDetail = () => {
 
       if (foundUser) {
         // TEMP: Replace with API call
-        const userFamily = null; // storage.getFamilyByUserId(foundUser.id);
-        setFamily(userFamily || null);
+        const userFamily: Family | null = null; // storage.getFamilyByUserId(foundUser.id);
+        setFamily(userFamily);
 
         if (userFamily) {
-          const otherMemberId = userFamily.members.find(memberId => memberId !== foundUser.id);
+          // Type assertions needed because TypeScript's control flow analysis
+          // knows these variables are always null in this placeholder code
+          const otherMemberId = (userFamily as Family).members.find((memberId: string) => memberId !== (foundUser as User).id);
           if (otherMemberId) {
             // TEMP: Replace with API call
-            const member = null; // storage.getUserById(otherMemberId);
+            const member: User | null = null; // storage.getUserById(otherMemberId);
             setFamilyMember(member);
           }
         }

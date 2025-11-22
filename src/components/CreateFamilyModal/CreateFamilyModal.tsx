@@ -87,10 +87,7 @@ const CreateFamilyModal = ({ currentUser, onClose, onFamilyCreated }: CreateFami
     // storage.createFamily(family);
 
     // Update request status
-    const updatedRequest: FamilyRequest = {
-      ...request,
-      status: FAMILY_REQUEST_STATUS.ACCEPTED,
-    };
+   
     // TEMP: Replace with API call
     // storage.updateFamilyRequest(updatedRequest);
 
