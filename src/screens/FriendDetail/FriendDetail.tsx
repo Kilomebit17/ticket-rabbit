@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { storage } from '@/utils/storage';
 import { User, Family } from '@/types';
 import { formatDate } from '@/utils/helpers';
+import { SEX_VALUES, SEX_EMOJIS } from '@/constants';
 import styles from './FriendDetail.module.scss';
 
 const FriendDetail = () => {
@@ -14,17 +14,20 @@ const FriendDetail = () => {
 
   useEffect(() => {
     if (id) {
-      const foundUser = storage.getUserById(id);
+      // TEMP: Replace with API call
+      const foundUser = null; // storage.getUserById(id);
       setUser(foundUser);
 
       if (foundUser) {
-        const userFamily = storage.getFamilyByUserId(foundUser.id);
+        // TEMP: Replace with API call
+        const userFamily = null; // storage.getFamilyByUserId(foundUser.id);
         setFamily(userFamily || null);
 
         if (userFamily) {
           const otherMemberId = userFamily.members.find(memberId => memberId !== foundUser.id);
           if (otherMemberId) {
-            const member = storage.getUserById(otherMemberId);
+            // TEMP: Replace with API call
+            const member = null; // storage.getUserById(otherMemberId);
             setFamilyMember(member);
           }
         }
@@ -53,7 +56,7 @@ const FriendDetail = () => {
 
       <div className={styles.profileSection}>
         <div className={styles.avatar}>
-          <span className={styles.emoji}>{user.sex === 'man' ? '👨' : '👩'}</span>
+          <span className={styles.emoji}>{user.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}</span>
         </div>
         <h2 className={styles.name}>{user.name}</h2>
         <div className={styles.balance}>
@@ -100,7 +103,7 @@ const FriendDetail = () => {
                 <div className={styles.infoRow}>
                   <span className={styles.label}>Family Member:</span>
                   <span className={styles.value}>
-                    {familyMember.name} ({familyMember.sex === 'man' ? '👨' : '👩'})
+                    {familyMember.name} ({familyMember.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN})
                   </span>
                 </div>
               )}

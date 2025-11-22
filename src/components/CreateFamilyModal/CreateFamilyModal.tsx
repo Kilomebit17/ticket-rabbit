@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
-import { storage } from '@/utils/storage';
 import { generateId } from '@/utils/helpers';
 import { User, Family, FamilyRequest } from '@/types';
+import {
+  CREATE_FAMILY_TEXT,
+  FAMILY_REQUEST_STATUS,
+  SEX_VALUES,
+  SEX_EMOJIS,
+} from '@/constants';
 import styles from './CreateFamilyModal.module.scss';
 
 interface CreateFamilyModalProps {
@@ -17,13 +22,13 @@ const CreateFamilyModal = ({ currentUser, onClose, onFamilyCreated }: CreateFami
   const [pendingRequests, setPendingRequests] = useState<FamilyRequest[]>([]);
 
   useEffect(() => {
-    // Get all users except current user
-    const allUsers = storage.getUsers().filter(u => u.id !== currentUser.id);
+    // TEMP: Replace with API call
+    const allUsers: User[] = []; // storage.getUsers().filter(u => u.id !== currentUser.id);
     setUsers(allUsers);
     setFilteredUsers(allUsers);
 
-    // Get pending requests
-    const requests = storage.getFamilyRequests();
+    // TEMP: Replace with API call
+    const requests: FamilyRequest[] = []; // storage.getFamilyRequests();
     setPendingRequests(requests);
   }, [currentUser]);
 
@@ -41,18 +46,18 @@ const CreateFamilyModal = ({ currentUser, onClose, onFamilyCreated }: CreateFami
   const handleSendRequest = (toUser: User) => {
     // Check if request already exists
     const existingRequest = pendingRequests.find(
-      r => r.fromUserId === currentUser.id && r.toUserId === toUser.id && r.status === 'pending'
+      r => r.fromUserId === currentUser.id && r.toUserId === toUser.id && r.status === FAMILY_REQUEST_STATUS.PENDING
     );
 
     if (existingRequest) {
-      alert('Request already sent');
+      alert(CREATE_FAMILY_TEXT.ALERT_REQUEST_EXISTS);
       return;
     }
 
-    // Check if user already has a family
-    const existingFamily = storage.getFamilyByUserId(toUser.id);
+    // TEMP: Replace with API call
+    const existingFamily = null; // storage.getFamilyByUserId(toUser.id);
     if (existingFamily) {
-      alert('This user already has a family');
+      alert(CREATE_FAMILY_TEXT.ALERT_USER_HAS_FAMILY);
       return;
     }
 
@@ -60,13 +65,14 @@ const CreateFamilyModal = ({ currentUser, onClose, onFamilyCreated }: CreateFami
       id: generateId(),
       fromUserId: currentUser.id,
       toUserId: toUser.id,
-      status: 'pending',
+      status: FAMILY_REQUEST_STATUS.PENDING,
       createdAt: Date.now(),
     };
 
-    storage.createFamilyRequest(request);
+    // TEMP: Replace with API call
+    // storage.createFamilyRequest(request);
     setPendingRequests([...pendingRequests, request]);
-    alert('Family request sent!');
+    alert(CREATE_FAMILY_TEXT.ALERT_REQUEST_SENT);
   };
 
   const handleAcceptRequest = (request: FamilyRequest) => {
@@ -77,33 +83,35 @@ const CreateFamilyModal = ({ currentUser, onClose, onFamilyCreated }: CreateFami
       createdAt: Date.now(),
     };
 
-    storage.createFamily(family);
+    // TEMP: Replace with API call
+    // storage.createFamily(family);
 
     // Update request status
     const updatedRequest: FamilyRequest = {
       ...request,
-      status: 'accepted',
+      status: FAMILY_REQUEST_STATUS.ACCEPTED,
     };
-    storage.updateFamilyRequest(updatedRequest);
+    // TEMP: Replace with API call
+    // storage.updateFamilyRequest(updatedRequest);
 
     onFamilyCreated(family);
   };
 
   const hasPendingRequest = (userId: string) => {
     return pendingRequests.some(
-      r => r.fromUserId === currentUser.id && r.toUserId === userId && r.status === 'pending'
+      r => r.fromUserId === currentUser.id && r.toUserId === userId && r.status === FAMILY_REQUEST_STATUS.PENDING
     );
   };
 
   const hasIncomingRequest = (userId: string) => {
     return pendingRequests.some(
-      r => r.fromUserId === userId && r.toUserId === currentUser.id && r.status === 'pending'
+      r => r.fromUserId === userId && r.toUserId === currentUser.id && r.status === FAMILY_REQUEST_STATUS.PENDING
     );
   };
 
   const getIncomingRequest = (userId: string) => {
     return pendingRequests.find(
-      r => r.fromUserId === userId && r.toUserId === currentUser.id && r.status === 'pending'
+      r => r.fromUserId === userId && r.toUserId === currentUser.id && r.status === FAMILY_REQUEST_STATUS.PENDING
     );
   };
 
@@ -111,7 +119,7 @@ const CreateFamilyModal = ({ currentUser, onClose, onFamilyCreated }: CreateFami
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
-          <h3>Create Family</h3>
+          <h3>{CREATE_FAMILY_TEXT.TITLE}</h3>
           <button onClick={onClose} className={styles.closeButton}>
             ×
           </button>
@@ -120,7 +128,7 @@ const CreateFamilyModal = ({ currentUser, onClose, onFamilyCreated }: CreateFami
         <div className={styles.searchSection}>
           <input
             type="text"
-            placeholder="Search users..."
+            placeholder={CREATE_FAMILY_TEXT.PLACEHOLDER_SEARCH}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={styles.searchInput}
@@ -129,7 +137,7 @@ const CreateFamilyModal = ({ currentUser, onClose, onFamilyCreated }: CreateFami
 
         <div className={styles.usersList}>
           {filteredUsers.length === 0 ? (
-            <div className={styles.noUsers}>No users found</div>
+            <div className={styles.noUsers}>{CREATE_FAMILY_TEXT.NO_USERS}</div>
           ) : (
             filteredUsers.map(user => {
               const hasRequest = hasPendingRequest(user.id);
@@ -139,7 +147,7 @@ const CreateFamilyModal = ({ currentUser, onClose, onFamilyCreated }: CreateFami
               return (
                 <div key={user.id} className={styles.userItem}>
                   <div className={styles.userInfo}>
-                    <span className={styles.userEmoji}>{user.sex === 'man' ? '👨' : '👩'}</span>
+                    <span className={styles.userEmoji}>{user.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}</span>
                     <div>
                       <div className={styles.userName}>{user.name}</div>
                       <div className={styles.userSex}>{user.sex}</div>
@@ -151,16 +159,16 @@ const CreateFamilyModal = ({ currentUser, onClose, onFamilyCreated }: CreateFami
                         onClick={() => handleAcceptRequest(incomingRequest)}
                         className={styles.acceptButton}
                       >
-                        Accept Request
+                        {CREATE_FAMILY_TEXT.BUTTON_ACCEPT_REQUEST}
                       </button>
                     ) : hasRequest ? (
-                      <span className={styles.requestSent}>Request Sent</span>
+                      <span className={styles.requestSent}>{CREATE_FAMILY_TEXT.REQUEST_SENT}</span>
                     ) : (
                       <button
                         onClick={() => handleSendRequest(user)}
                         className={styles.sendButton}
                       >
-                        Send Request
+                        {CREATE_FAMILY_TEXT.BUTTON_SEND_REQUEST}
                       </button>
                     )}
                   </div>

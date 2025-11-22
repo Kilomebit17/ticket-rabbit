@@ -18,3 +18,12 @@ export const AuthProvider: ComponentType<PropsWithChildren> = ({
 // Re-export useAuth hook for convenience
 export { useAuth } from './useAuth';
 
+// Re-export state access hooks
+export {
+  useCurrentUser,
+  useAuthLoading,
+  useAuthError,
+  useAuthBalance,
+  useIsAuthenticated,
+} from './hooks';
+

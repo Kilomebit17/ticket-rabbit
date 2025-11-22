@@ -1,46 +1,41 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { storage } from '@/utils/storage';
-import { User, Family } from '@/types';
+import { Family } from '@/types';
 import { formatDate } from '@/utils/helpers';
+import { useCurrentUser, useAuthLoading } from '@/providers/auth';
+import { SEX_VALUES, SEX_EMOJIS, DASHBOARD_TEXT } from '@/constants';
 import styles from './Profile.module.scss';
 
-const Profile = () => {
-  const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+const Profile = (): JSX.Element => {
+  const currentUser = useCurrentUser();
+  const isLoading = useAuthLoading();
   const [family, setFamily] = useState<Family | null>(null);
-  const [familyMember, setFamilyMember] = useState<User | null>(null);
+  const [familyMember, setFamilyMember] = useState<{ name: string; sex: string } | null>(null);
 
   useEffect(() => {
-    const user = storage.getCurrentUser();
-    setCurrentUser(user);
-
-    if (user) {
-      const userFamily = storage.getFamilyByUserId(user.id);
+    if (currentUser) {
+      // TEMP: Replace with API call
+      const userFamily: Family | null = null; // storage.getFamilyByUserId(currentUser.id);
       setFamily(userFamily || null);
 
       if (userFamily) {
-        const otherMemberId = userFamily.members.find(id => id !== user.id);
+        const otherMemberId = (userFamily as Family).members.find((id: string) => id !== currentUser.id);
         if (otherMemberId) {
-          const member = storage.getUserById(otherMemberId);
-          setFamilyMember(member);
+          // TEMP: Replace with API call
+          const member: { name: string; sex: string } | null = null; // storage.getUserById(otherMemberId);
+          if (member) {
+            setFamilyMember({ name: (member as { name: string; sex: string }).name, sex: (member as { name: string; sex: string }).sex });
+          }
         }
       }
     }
-  }, []);
+  }, [currentUser]);
 
-  const handleSwitchToFakeUser = (userId: string) => {
-    const fakeUser = storage.getUserById(userId);
-    if (fakeUser) {
-      storage.setCurrentUser(fakeUser);
-      setCurrentUser(fakeUser);
-      navigate('/');
-      window.location.reload(); // Reload to refresh all components
-    }
-  };
+  if (isLoading) {
+    return <div>{DASHBOARD_TEXT.LOADING}</div>;
+  }
 
   if (!currentUser) {
-    return <div>Loading...</div>;
+    return <div>{DASHBOARD_TEXT.LOADING}</div>;
   }
 
   return (
@@ -51,7 +46,7 @@ const Profile = () => {
         <h3 className={styles.sectionTitle}>Personal Information</h3>
         <div className={styles.infoCard}>
           <div className={styles.avatar}>
-            <span className={styles.emoji}>{currentUser.sex === 'man' ? '👨' : '👩'}</span>
+            <span className={styles.emoji}>{currentUser.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}</span>
           </div>
           <div className={styles.info}>
             <div className={styles.infoRow}>
@@ -90,7 +85,7 @@ const Profile = () => {
                 <div className={styles.infoRow}>
                   <span className={styles.label}>Family Member:</span>
                   <span className={styles.value}>
-                    {familyMember.name} ({familyMember.sex === 'man' ? '👨' : '👩'})
+                    {familyMember.name} ({familyMember.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN})
                   </span>
                 </div>
               )}
@@ -104,32 +99,6 @@ const Profile = () => {
           <p>You don't have a family yet. Create one from the Dashboard!</p>
         </div>
       )}
-
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Testing</h3>
-        <div className={styles.testingCard}>
-          <p className={styles.testingDescription}>
-            Switch to fake users to test the family and task features:
-          </p>
-          <div className={styles.fakeUsers}>
-            <button
-              onClick={() => handleSwitchToFakeUser('fake-user-1')}
-              className={styles.fakeUserButton}
-            >
-              Switch to John Doe (👨)
-            </button>
-            <button
-              onClick={() => handleSwitchToFakeUser('fake-user-2')}
-              className={styles.fakeUserButton}
-            >
-              Switch to Jane Doe (👩)
-            </button>
-          </div>
-          <p className={styles.testingNote}>
-            These fake users are already in a family together with sample tasks.
-          </p>
-        </div>
-      </div>
     </div>
   );
 };

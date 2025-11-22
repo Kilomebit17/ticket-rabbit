@@ -1,7 +1,13 @@
 import { useState } from "react";
 import type { Sex } from "@/types";
 import { useAuth } from "@/providers/auth";
-import { PROJECT_NAME } from "@/constants";
+import {
+  SEX_SELECTION_TEXT,
+  SEX_VALUES,
+  SEX_LABELS,
+  SEX_EMOJIS,
+  LOG_MESSAGES,
+} from "@/constants";
 import styles from "./SexSelection.module.scss";
 
 const SexSelection = (): JSX.Element => {
@@ -17,12 +23,12 @@ const SexSelection = (): JSX.Element => {
     setValidationError("");
 
     if (!selectedSex) {
-      setValidationError("Please select your sex");
+      setValidationError(SEX_SELECTION_TEXT.VALIDATION_SELECT_SEX);
       return;
     }
 
     if (!name.trim()) {
-      setValidationError("Please enter your name");
+      setValidationError(SEX_SELECTION_TEXT.VALIDATION_ENTER_NAME);
       return;
     }
 
@@ -34,7 +40,7 @@ const SexSelection = (): JSX.Element => {
       });
     } catch (error) {
       // Error is handled by auth context
-      console.error("Failed to create user:", error);
+      console.error(LOG_MESSAGES.FAILED_TO_CREATE_USER, error);
     } finally {
       setIsSubmitting(false);
     }
@@ -43,16 +49,16 @@ const SexSelection = (): JSX.Element => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <h1 className={styles.title}>Welcome to {PROJECT_NAME}</h1>
+        <h1 className={styles.title}>{SEX_SELECTION_TEXT.TITLE}</h1>
         <p className={styles.subtitle}>
-          Please select your sex and enter your name
+          {SEX_SELECTION_TEXT.SUBTITLE}
         </p>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.nameInput}>
             <input
               type="text"
-              placeholder="Enter your name"
+              placeholder={SEX_SELECTION_TEXT.NAME_PLACEHOLDER}
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
@@ -67,30 +73,30 @@ const SexSelection = (): JSX.Element => {
             <button
               type="button"
               onClick={() => {
-                setSelectedSex("man");
+                setSelectedSex(SEX_VALUES.MAN);
                 clearError();
                 setValidationError("");
               }}
               className={`${styles.sexButton} ${
-                selectedSex === "man" ? styles.selected : ""
+                selectedSex === SEX_VALUES.MAN ? styles.selected : ""
               }`}
             >
-              <span className={styles.emoji}>👨</span>
-              <span className={styles.label}>Man</span>
+              <span className={styles.emoji}>{SEX_EMOJIS.MAN}</span>
+              <span className={styles.label}>{SEX_LABELS.MAN}</span>
             </button>
             <button
               type="button"
               onClick={() => {
-                setSelectedSex("woman");
+                setSelectedSex(SEX_VALUES.WOMAN);
                 clearError();
                 setValidationError("");
               }}
               className={`${styles.sexButton} ${
-                selectedSex === "woman" ? styles.selected : ""
+                selectedSex === SEX_VALUES.WOMAN ? styles.selected : ""
               }`}
             >
-              <span className={styles.emoji}>👩</span>
-              <span className={styles.label}>Woman</span>
+              <span className={styles.emoji}>{SEX_EMOJIS.WOMAN}</span>
+              <span className={styles.label}>{SEX_LABELS.WOMAN}</span>
             </button>
           </div>
 
@@ -103,7 +109,7 @@ const SexSelection = (): JSX.Element => {
             className={styles.submitButton}
             disabled={isSubmitting || !selectedSex || !name.trim()}
           >
-            {isSubmitting ? "Creating..." : "Continue"}
+            {isSubmitting ? SEX_SELECTION_TEXT.BUTTON_CREATING : SEX_SELECTION_TEXT.BUTTON_CONTINUE}
           </button>
         </form>
       </div>

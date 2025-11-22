@@ -1,4 +1,5 @@
 import styles from './TryAgain.module.scss';
+import { TRY_AGAIN_TEXT, EXTERNAL_URLS } from '@/constants';
 
 /**
  * TryAgain screen component
@@ -9,18 +10,18 @@ const TryAgain = (): JSX.Element => {
     <div className={styles.container}>
       <div className={styles.content}>
         <div className={styles.icon}>📱</div>
-        <h1 className={styles.title}>Please Open in Telegram</h1>
+        <h1 className={styles.title}>{TRY_AGAIN_TEXT.TITLE}</h1>
         <p className={styles.message}>
-          This app is designed to work within Telegram. Please open it from a Telegram bot or link.
+          {TRY_AGAIN_TEXT.MESSAGE}
         </p>
         <button
           type="button"
           onClick={() => {
-            window.open('https://t.me/ticket_rabbit_bot', '_blank');
+            window.open(EXTERNAL_URLS.TELEGRAM_BOT, '_blank');
           }}
           className={styles.retryButton}
         >
-          Open in Telegram
+          {TRY_AGAIN_TEXT.BUTTON_OPEN}
         </button>
       </div>
     </div>

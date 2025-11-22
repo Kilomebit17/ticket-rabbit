@@ -1,25 +1,9 @@
-import { useState, useEffect } from 'react';
-import { storage } from '@/utils/storage';
+import { useAuthBalance } from '@/providers/auth';
 import { PROJECT_NAME } from '@/constants';
 import styles from './Header.module.scss';
 
-const Header = () => {
-  const [balance, setBalance] = useState(0);
-
-  useEffect(() => {
-    const updateBalance = () => {
-      const currentUser = storage.getCurrentUser();
-      setBalance(currentUser?.balance || 0);
-    };
-
-    // Update balance on mount
-    updateBalance();
-
-    // Update balance periodically to catch changes
-    const interval = setInterval(updateBalance, 500);
-
-    return () => clearInterval(interval);
-  }, []);
+const Header = (): JSX.Element => {
+  const balance = useAuthBalance();
 
   return (
     <header className={styles.header}>

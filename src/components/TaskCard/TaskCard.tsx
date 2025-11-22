@@ -1,5 +1,9 @@
 import { Task, User, TaskStatus } from '@/types';
 import { formatDate } from '@/utils/helpers';
+import {
+  TASK_CARD_TEXT,
+  TASK_STATUS,
+} from '@/constants';
 import styles from './TaskCard.module.scss';
 
 interface TaskCardProps {
@@ -12,16 +16,16 @@ interface TaskCardProps {
 
 const TaskCard = ({ task, currentUser, familyMember, onSolve, onApprove }: TaskCardProps) => {
   const isCreator = task.creatorId === currentUser.id;
-  const canSolve = !isCreator && !task.solverId && task.status === 'Created';
-  const canApprove = isCreator && task.status === 'Pending';
+  const canSolve = !isCreator && !task.solverId && task.status === TASK_STATUS.CREATED;
+  const canApprove = isCreator && task.status === TASK_STATUS.PENDING;
 
   const getStatusColor = (status: TaskStatus) => {
     switch (status) {
-      case 'Created':
+      case TASK_STATUS.CREATED:
         return styles.statusCreated;
-      case 'Pending':
+      case TASK_STATUS.PENDING:
         return styles.statusPending;
-      case 'Approved':
+      case TASK_STATUS.APPROVED:
         return styles.statusApproved;
       default:
         return '';
@@ -29,14 +33,14 @@ const TaskCard = ({ task, currentUser, familyMember, onSolve, onApprove }: TaskC
   };
 
   const getCreatorName = () => {
-    if (task.creatorId === currentUser.id) return 'You';
-    return familyMember?.name || 'Unknown';
+    if (task.creatorId === currentUser.id) return TASK_CARD_TEXT.CREATOR_YOU;
+    return familyMember?.name || TASK_CARD_TEXT.UNKNOWN;
   };
 
   const getSolverName = () => {
     if (!task.solverId) return null;
-    if (task.solverId === currentUser.id) return 'You';
-    return familyMember?.name || 'Unknown';
+    if (task.solverId === currentUser.id) return TASK_CARD_TEXT.SOLVER_YOU;
+    return familyMember?.name || TASK_CARD_TEXT.UNKNOWN;
   };
 
   return (
@@ -51,23 +55,23 @@ const TaskCard = ({ task, currentUser, familyMember, onSolve, onApprove }: TaskC
 
       <div className={styles.details}>
         <div className={styles.detailRow}>
-          <span className={styles.label}>Status:</span>
+          <span className={styles.label}>{TASK_CARD_TEXT.LABEL_STATUS}</span>
           <span className={`${styles.status} ${getStatusColor(task.status)}`}>
             {task.status}
           </span>
         </div>
         <div className={styles.detailRow}>
-          <span className={styles.label}>Created by:</span>
+          <span className={styles.label}>{TASK_CARD_TEXT.LABEL_CREATED_BY}</span>
           <span>{getCreatorName()}</span>
         </div>
         {task.solverId && (
           <div className={styles.detailRow}>
-            <span className={styles.label}>Solved by:</span>
+            <span className={styles.label}>{TASK_CARD_TEXT.LABEL_SOLVED_BY}</span>
             <span>{getSolverName()}</span>
           </div>
         )}
         <div className={styles.detailRow}>
-          <span className={styles.label}>Created:</span>
+          <span className={styles.label}>{TASK_CARD_TEXT.LABEL_CREATED}</span>
           <span>{formatDate(task.createdAt)}</span>
         </div>
       </div>
@@ -75,16 +79,16 @@ const TaskCard = ({ task, currentUser, familyMember, onSolve, onApprove }: TaskC
       <div className={styles.actions}>
         {canSolve && (
           <button onClick={() => onSolve(task.id)} className={styles.solveButton}>
-            Solve Task
+            {TASK_CARD_TEXT.BUTTON_SOLVE}
           </button>
         )}
         {canApprove && (
           <button onClick={() => onApprove(task.id)} className={styles.approveButton}>
-            Approve Task
+            {TASK_CARD_TEXT.BUTTON_APPROVE}
           </button>
         )}
-        {task.status === 'Approved' && (
-          <div className={styles.approvedBadge}>✓ Approved</div>
+        {task.status === TASK_STATUS.APPROVED && (
+          <div className={styles.approvedBadge}>{TASK_CARD_TEXT.BADGE_APPROVED}</div>
         )}
       </div>
     </div>

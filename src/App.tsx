@@ -1,42 +1,53 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { HttpClientProvider } from '@/providers/http-client';
-import { AuthProvider, useAuth } from '@/providers/auth';
-import { useTelegramWebApp } from '@/hooks';
-import { PROJECT_NAME } from '@/constants';
-import SexSelection from './screens/SexSelection';
-import Dashboard from './screens/Dashboard';
-import Userboard from './screens/Userboard';
-import Profile from './screens/Profile';
-import FriendDetail from './screens/FriendDetail';
-import TryAgain from './screens/TryAgain';
-import Layout from './components/Layout';
-import { useEffect } from 'react';
-import { isTelegramWebApp } from './utils/telegram';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { HttpClientProvider } from "@/providers/http-client";
+import {
+  AuthProvider,
+  useAuth,
+  useCurrentUser,
+  useAuthLoading,
+} from "@/providers/auth";
+import { useTelegramWebApp } from "@/hooks";
+import { PROJECT_NAME } from "@/constants";
+import SexSelection from "./screens/SexSelection";
+import Dashboard from "./screens/Dashboard";
+import Userboard from "./screens/Userboard";
+import Profile from "./screens/Profile";
+import FriendDetail from "./screens/FriendDetail";
+import TryAgain from "./screens/TryAgain";
+import Layout from "./components/Layout";
+import { useEffect } from "react";
+import { isTelegramWebApp } from "./utils/telegram";
 
 /**
  * Main app content component that uses auth context
  */
 const AppContent = (): JSX.Element => {
   const isTelegram = isTelegramWebApp();
+  const isProduction = import.meta.env.PROD;
 
   // Initialize Telegram WebApp (expands and calls ready automatically)
   // Hook is safe to call even if not in Telegram (it handles the check internally)
   useTelegramWebApp();
 
-  const { state, checkUser } = useAuth();
+  const { checkUser } = useAuth();
+  const currentUser = useCurrentUser();
+  const isLoading = useAuthLoading();
 
   useEffect(() => {
     document.title = PROJECT_NAME;
   }, []);
 
   useEffect(() => {
-    if (isTelegram) {
-      checkUser();
-    }
-  }, [isTelegram, checkUser]);
+    checkUser();
+  }, [checkUser]);
 
-  // Check if running in Telegram WebApp early
-  if (!isTelegram) {
+  // Check if running in Telegram WebApp early (only in production)
+  if (isProduction && !isTelegram) {
     return (
       <Router>
         <Routes>
@@ -47,15 +58,15 @@ const AppContent = (): JSX.Element => {
     );
   }
 
-  if (state.isLoading) {
+  if (isLoading) {
     return (
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          fontSize: '1.2rem',
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          fontSize: "1.2rem",
         }}
       >
         Loading...
@@ -63,7 +74,7 @@ const AppContent = (): JSX.Element => {
     );
   }
 
-  if (!state.user) {
+  if (!currentUser) {
     return <SexSelection />;
   }
 
@@ -96,4 +107,3 @@ function App(): JSX.Element {
 }
 
 export default App;
-

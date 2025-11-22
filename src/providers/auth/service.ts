@@ -10,6 +10,7 @@ import { EAuthActionType } from './types';
 import initialState from './state';
 import { reducer } from './reducer';
 import { useHttpClient } from '@/providers/http-client';
+import { ERROR_MESSAGES, LOG_MESSAGES } from '@/constants';
 
 /**
  * Check if error is a 404 Not Found error
@@ -63,7 +64,7 @@ export const useAuthService = (): IAuthContext => {
         setUser(null);
       } else {
         const errorMessage =
-          error instanceof Error ? error.message : 'Failed to check user';
+          error instanceof Error ? error.message : ERROR_MESSAGES.FAILED_TO_CHECK_USER;
         setError(errorMessage);
       }
     }
@@ -84,8 +85,9 @@ export const useAuthService = (): IAuthContext => {
         return response.data.user;
       } catch (error: unknown) {
         const errorMessage =
-          error instanceof Error ? error.message : 'Failed to create user';
+          error instanceof Error ? error.message : ERROR_MESSAGES.FAILED_TO_CREATE_USER;
         setError(errorMessage);
+        console.error(LOG_MESSAGES.FAILED_TO_CREATE_USER, error);
         throw error;
       }
     },

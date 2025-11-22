@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
+import { HTTP_CONFIG, API_URLS, LOG_MESSAGES, TEMP_INIT_DATA } from '@/constants';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || API_URLS.DEFAULT_PRODUCTION;
 
 /**
  * Creates and returns a configured Axios instance with interceptors
@@ -8,9 +9,9 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000
 export function getHttpClient(): AxiosInstance {
   const instance = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 10000,
+    timeout: HTTP_CONFIG.TIMEOUT,
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': HTTP_CONFIG.CONTENT_TYPE,
     },
   });
 
@@ -18,9 +19,15 @@ export function getHttpClient(): AxiosInstance {
   instance.interceptors.request.use(
     (config) => {
       // Get Telegram init data from window if available
-      const initData = (window as any).Telegram?.WebApp?.initData;
+      let initData = (window as any).Telegram?.WebApp?.initData;
+      
+      // Use temporary initData in development mode if real initData is not available
+      if (!initData && !import.meta.env.PROD) {
+        initData = TEMP_INIT_DATA;
+      }
+      
       if (initData) {
-        config.headers['x-telegram-init-data'] = initData;
+        config.headers[HTTP_CONFIG.TELEGRAM_INIT_DATA_HEADER] = initData;
       }
       return config;
     },
@@ -35,17 +42,17 @@ export function getHttpClient(): AxiosInstance {
     (error: AxiosError) => {
       if (error.response) {
         // Server responded with error status
-        console.error('API Error:', {
+        console.error(LOG_MESSAGES.API_ERROR, {
           status: error.response.status,
           data: error.response.data,
           url: error.config?.url,
         });
       } else if (error.request) {
         // Request was made but no response received
-        console.error('Network Error:', error.message);
+        console.error(LOG_MESSAGES.NETWORK_ERROR, error.message);
       } else {
         // Something else happened
-        console.error('Error:', error.message);
+        console.error(LOG_MESSAGES.ERROR, error.message);
       }
       return Promise.reject(error);
     }

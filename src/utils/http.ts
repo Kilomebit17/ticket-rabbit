@@ -1,15 +1,16 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
+import { HTTP_CONFIG, API_URLS, LOG_MESSAGES } from '@/constants';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ticket-backend-production-8744.up.railway.app/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || API_URLS.DEFAULT_PRODUCTION;
 
 /**
  * Creates and configures an Axios instance for API requests
  */
 export const httpClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: HTTP_CONFIG.TIMEOUT,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': HTTP_CONFIG.CONTENT_TYPE,
   },
 });
 
@@ -19,7 +20,7 @@ httpClient.interceptors.request.use(
     // Get Telegram init data from window if available
     const initData = (window as any).Telegram?.WebApp?.initData;
     if (initData) {
-      config.headers['X-Telegram-Init-Data'] = initData;
+      config.headers[HTTP_CONFIG.TELEGRAM_INIT_DATA_HEADER_ALT] = initData;
     }
     return config;
   },
@@ -34,17 +35,17 @@ httpClient.interceptors.response.use(
   (error: AxiosError) => {
     if (error.response) {
       // Server responded with error status
-      console.error('API Error:', {
+      console.error(LOG_MESSAGES.API_ERROR, {
         status: error.response.status,
         data: error.response.data,
         url: error.config?.url,
       });
     } else if (error.request) {
       // Request was made but no response received
-      console.error('Network Error:', error.message);
+      console.error(LOG_MESSAGES.NETWORK_ERROR, error.message);
     } else {
       // Something else happened
-      console.error('Error:', error.message);
+      console.error(LOG_MESSAGES.ERROR, error.message);
     }
     return Promise.reject(error);
   }
