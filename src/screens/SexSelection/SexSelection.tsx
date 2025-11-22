@@ -1,27 +1,28 @@
-import { useState } from 'react';
-import type { Sex } from '@/types';
-import { useAuth } from '@/providers/auth';
-import styles from './SexSelection.module.scss';
+import { useState } from "react";
+import type { Sex } from "@/types";
+import { useAuth } from "@/providers/auth";
+import { PROJECT_NAME } from "@/constants";
+import styles from "./SexSelection.module.scss";
 
 const SexSelection = (): JSX.Element => {
-  const { createUser, state, clearError } = useAuth();
+  const { createUser, clearError } = useAuth();
   const [selectedSex, setSelectedSex] = useState<Sex | null>(null);
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [validationError, setValidationError] = useState<string>('');
+  const [validationError, setValidationError] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     clearError();
-    setValidationError('');
+    setValidationError("");
 
     if (!selectedSex) {
-      setValidationError('Please select your sex');
+      setValidationError("Please select your sex");
       return;
     }
 
     if (!name.trim()) {
-      setValidationError('Please enter your name');
+      setValidationError("Please enter your name");
       return;
     }
 
@@ -33,7 +34,7 @@ const SexSelection = (): JSX.Element => {
       });
     } catch (error) {
       // Error is handled by auth context
-      console.error('Failed to create user:', error);
+      console.error("Failed to create user:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -42,8 +43,10 @@ const SexSelection = (): JSX.Element => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <h1 className={styles.title}>Welcome to Intimulator</h1>
-        <p className={styles.subtitle}>Please select your sex and enter your name</p>
+        <h1 className={styles.title}>Welcome to {PROJECT_NAME}</h1>
+        <p className={styles.subtitle}>
+          Please select your sex and enter your name
+        </p>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.nameInput}>
@@ -54,7 +57,7 @@ const SexSelection = (): JSX.Element => {
               onChange={(e) => {
                 setName(e.target.value);
                 clearError();
-                setValidationError('');
+                setValidationError("");
               }}
               className={styles.input}
             />
@@ -64,11 +67,13 @@ const SexSelection = (): JSX.Element => {
             <button
               type="button"
               onClick={() => {
-                setSelectedSex('man');
+                setSelectedSex("man");
                 clearError();
-                setValidationError('');
+                setValidationError("");
               }}
-              className={`${styles.sexButton} ${selectedSex === 'man' ? styles.selected : ''}`}
+              className={`${styles.sexButton} ${
+                selectedSex === "man" ? styles.selected : ""
+              }`}
             >
               <span className={styles.emoji}>👨</span>
               <span className={styles.label}>Man</span>
@@ -76,27 +81,29 @@ const SexSelection = (): JSX.Element => {
             <button
               type="button"
               onClick={() => {
-                setSelectedSex('woman');
+                setSelectedSex("woman");
                 clearError();
-                setValidationError('');
+                setValidationError("");
               }}
-              className={`${styles.sexButton} ${selectedSex === 'woman' ? styles.selected : ''}`}
+              className={`${styles.sexButton} ${
+                selectedSex === "woman" ? styles.selected : ""
+              }`}
             >
               <span className={styles.emoji}>👩</span>
               <span className={styles.label}>Woman</span>
             </button>
           </div>
 
-          {(validationError || state.error) && (
-            <div className={styles.error}>{validationError || state.error}</div>
+          {validationError && (
+            <div className={styles.error}>{validationError}</div>
           )}
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className={styles.submitButton}
             disabled={isSubmitting || !selectedSex || !name.trim()}
           >
-            {isSubmitting ? 'Creating...' : 'Continue'}
+            {isSubmitting ? "Creating..." : "Continue"}
           </button>
         </form>
       </div>
@@ -105,4 +112,3 @@ const SexSelection = (): JSX.Element => {
 };
 
 export default SexSelection;
-

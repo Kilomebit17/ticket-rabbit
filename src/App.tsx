@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { HttpClientProvider } from '@/providers/http-client';
 import { AuthProvider, useAuth } from '@/providers/auth';
 import { useTelegramWebApp } from '@/hooks';
+import { PROJECT_NAME } from '@/constants';
 import SexSelection from './screens/SexSelection';
 import Dashboard from './screens/Dashboard';
 import Userboard from './screens/Userboard';
@@ -23,6 +24,10 @@ const AppContent = (): JSX.Element => {
   useTelegramWebApp();
 
   const { state, checkUser } = useAuth();
+
+  useEffect(() => {
+    document.title = PROJECT_NAME;
+  }, []);
 
   useEffect(() => {
     if (isTelegram) {

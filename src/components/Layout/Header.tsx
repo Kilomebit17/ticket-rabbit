@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { storage } from '@/utils/storage';
+import { PROJECT_NAME } from '@/constants';
 import styles from './Header.module.scss';
 
 const Header = () => {
@@ -22,7 +23,7 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      <div className={styles.logo}>Intimulator</div>
+      <div className={styles.logo}>{PROJECT_NAME}</div>
       <div className={styles.balance}>
         <span className={styles.ticketIcon}>🎫</span>
         <span className={styles.balanceAmount}>{balance}</span>
