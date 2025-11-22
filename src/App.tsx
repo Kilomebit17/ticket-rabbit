@@ -74,7 +74,7 @@ const AppContent = (): JSX.Element => {
     );
   }
 
-  if (!currentUser) {
+  if (!currentUser && !isLoading) {
     return <SexSelection />;
   }
 

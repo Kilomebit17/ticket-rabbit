@@ -27,7 +27,7 @@ const Userboard = (): JSX.Element => {
 
       {users.length === 0 ? (
         <div className={styles.noUsers}>
-          <p>No users found</p>
+          <p className={styles.noUsersText}>No users found</p>
         </div>
       ) : (
         <div className={styles.usersList}>

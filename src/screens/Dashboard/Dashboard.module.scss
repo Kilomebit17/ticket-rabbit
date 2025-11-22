@@ -13,6 +13,24 @@
   min-height: 400px;
   text-align: center;
   padding: $spacing-xl;
+  background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($secondary-color, 0.1) 100%);
+  border: 2px solid rgba($primary-color, 0.2);
+  border-radius: $radius-xl;
+  box-shadow: $shadow-md;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  margin: $spacing-lg 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $primary-color 0%, $secondary-color 100%);
+  }
 }
 
 .title {

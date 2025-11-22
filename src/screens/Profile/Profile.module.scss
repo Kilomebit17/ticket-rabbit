@@ -147,3 +147,163 @@
   font-style: italic;
 }
 
+.inviteSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  padding: $spacing-xl $spacing-lg;
+  background: linear-gradient(135deg, rgba($primary-color, 0.03) 0%, rgba($primary-color, 0.08) 100%);
+  border: 1px solid rgba($primary-color, 0.15);
+  border-radius: $radius-xl;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.inviteText {
+  font-size: 15px;
+  color: $text-secondary;
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.5;
+}
+
+.inviteLinkContainer {
+  display: flex;
+  align-items: stretch;
+  gap: $spacing-sm;
+  padding: 0;
+  background-color: $surface;
+  border: 1.5px solid rgba($primary-color, 0.2);
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba($primary-color, 0.3);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.inviteLink {
+  flex: 1;
+  font-size: 14px;
+  color: $text-primary;
+  text-decoration: none;
+  word-break: break-all;
+  padding: $spacing-md $spacing-lg;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+
+  &:hover {
+    color: $primary-color;
+  }
+
+  &:focus {
+    outline: none;
+    background-color: rgba($primary-color, 0.03);
+  }
+
+  &:active {
+    color: $primary-dark;
+  }
+}
+
+.copyButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0;
+  background-color: $primary-color;
+  border: none;
+  border-left: 1.5px solid rgba($primary-color, 0.2);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  color: $surface;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+  }
+
+  &:hover {
+    background-color: $primary-dark;
+    
+    &::before {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: -2px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: -2px;
+  }
+}
+
+.copyIcon {
+  width: 20px;
+  height: 20px;
+  color: currentColor;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+
+  .copyButton:hover & {
+    transform: scale(1.08);
+  }
+
+  .copyButton:active & {
+    transform: scale(0.92);
+  }
+}
+
+.checkIcon {
+  animation: checkmark 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0) rotate(-45deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
