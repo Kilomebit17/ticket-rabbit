@@ -1,4 +1,4 @@
-import { type Toast } from 'react-hot-toast';
+import toastApi, { type Toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import styles from './Toast.module.scss';
 
@@ -108,7 +108,7 @@ export const CustomToast = ({ toast, message, type = 'info' }: IToastProps): JSX
   return (
     <div
       className={`${styles.toast} ${styles[type]} ${isVisible ? styles.visible : ''} ${!toast.visible ? styles.exiting : ''}`}
-      onClick={() => toast.dismiss(toast.id)}
+      onClick={() => toastApi.dismiss(toast.id)}
     >
       <div className={styles.content}>
         <div className={styles.iconWrapper}>{getIcon()}</div>
@@ -117,7 +117,7 @@ export const CustomToast = ({ toast, message, type = 'info' }: IToastProps): JSX
           className={styles.closeButton}
           onClick={(e) => {
             e.stopPropagation();
-            toast.dismiss(toast.id);
+            toastApi.dismiss(toast.id);
           }}
           aria-label="Close notification"
         >
