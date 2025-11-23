@@ -7,12 +7,40 @@ import type {
   IGetInvitesResponse,
   IRespondInviteRequest,
   IRespondInviteResponse,
+  IBackendFamilyInvite,
 } from './types';
 import { EFamilyInvitesActionType } from './types';
 import initialState from './state';
 import { reducer } from './reducer';
 import { useHttpClient } from '@/providers/http-client';
 import { ERROR_MESSAGES, LOG_MESSAGES } from '@/constants';
+
+/**
+ * Transform backend invite to local FamilyInvite format
+ * Backend returns fromUserId and toUserId as User objects, not strings
+ */
+const transformBackendInvite = (backendInvite: IBackendFamilyInvite): FamilyInvite => {
+  // Backend always returns User objects, but we keep type check for safety
+  const fromUser = typeof backendInvite.fromUserId === 'object' 
+    ? backendInvite.fromUserId 
+    : null;
+  const toUser = typeof backendInvite.toUserId === 'object'
+    ? backendInvite.toUserId
+    : null;
+
+  return {
+    id: backendInvite.id,
+    fromUserId: fromUser?.id || (typeof backendInvite.fromUserId === 'string' 
+      ? backendInvite.fromUserId 
+      : ''),
+    toUserId: toUser?.id || (typeof backendInvite.toUserId === 'string'
+      ? backendInvite.toUserId
+      : ''),
+    fromUser: fromUser || undefined,
+    status: backendInvite.status,
+    createdAt: new Date(backendInvite.createdAt).getTime(),
+  };
+};
 
 /**
  * Family invites service hook
@@ -40,6 +68,7 @@ export const useFamilyInvitesService = (): IFamilyInvitesContext => {
 
   /**
    * Send family invite
+   * Note: Sent invites are not added to the state, only received invites are displayed
    */
   const sendInvite = useCallback(
     async (toUserId: string): Promise<FamilyInvite> => {
@@ -50,10 +79,7 @@ export const useFamilyInvitesService = (): IFamilyInvitesContext => {
           { toUserId } as ISendInviteRequest
         );
         const invite = response.data.invite;
-        dispatch({
-          type: EFamilyInvitesActionType.ADD_INVITE,
-          invite,
-        });
+        // Don't add sent invite to state - only received invites are shown
         return invite;
       } catch (error: unknown) {
         const errorMessage =
@@ -71,7 +97,8 @@ export const useFamilyInvitesService = (): IFamilyInvitesContext => {
   );
 
   /**
-   * Get all family invites
+   * Get received family invites
+   * Only stores received invites (where user is the recipient)
    */
   const getInvites = useCallback(async (): Promise<FamilyInvite[]> => {
     setLoading(true);
@@ -79,9 +106,12 @@ export const useFamilyInvitesService = (): IFamilyInvitesContext => {
       const response = await httpClient.get<IGetInvitesResponse>(
         '/family/invites'
       );
-      const invites = response.data.invites || [];
-      setInvites(invites);
-      return invites;
+      
+      // Transform only received invites (sent invites are not shown to the user)
+      const receivedInvites = (response.data.received || []).map(transformBackendInvite);
+      
+      setInvites(receivedInvites);
+      return receivedInvites;
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error

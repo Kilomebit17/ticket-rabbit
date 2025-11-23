@@ -1,4 +1,4 @@
-import type { FamilyInvite, Family } from '@/types';
+import type { FamilyInvite, Family, User } from '@/types';
 
 /**
  * Base reducer action interface
@@ -85,10 +85,24 @@ export interface ISendInviteResponse {
 }
 
 /**
- * Get invites response
+ * Backend invite structure (raw from API)
+ */
+export interface IBackendFamilyInvite {
+  id: string;
+  fromUserId: User;
+  toUserId: User;
+  familyId: Family | null;
+  status: 'pending' | 'accepted' | 'rejected';
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+}
+
+/**
+ * Get invites response (matches backend structure)
  */
 export interface IGetInvitesResponse {
-  invites: FamilyInvite[];
+  sent: IBackendFamilyInvite[];
+  received: IBackendFamilyInvite[];
 }
 
 /**
