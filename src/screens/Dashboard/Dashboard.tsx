@@ -176,6 +176,7 @@ const Dashboard = (): JSX.Element => {
 
   return (
     <div className={styles.dashboard}>
+      <h3>hello</h3>
       {!family ? (
         <>
           <PendingInvites
