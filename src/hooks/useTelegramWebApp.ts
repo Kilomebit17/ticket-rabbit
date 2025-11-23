@@ -9,7 +9,7 @@ import { isTelegramWebApp, getTelegramWebApp } from '@/utils/telegram';
  * 
  * @example
  * ```tsx
- * const { webApp, isReady, ready, expand, close, showAlert, showConfirm } = useTelegramWebApp();
+ * const { webApp, isReady, ready, expand, close, showConfirm } = useTelegramWebApp();
  * 
  * useEffect(() => {
  *   if (isReady) {
@@ -49,18 +49,6 @@ export const useTelegramWebApp = () => {
     }
   }, [webApp]);
 
-  /**
-   * Shows a native popup with text message
-   */
-  const showAlert = useCallback((message: string, callback?: () => void): void => {
-    if (webApp) {
-      webApp.showAlert(message, callback);
-    } else {
-      // Fallback for non-Telegram environment
-      window.alert(message);
-      callback?.();
-    }
-  }, [webApp]);
 
   /**
    * Shows a native popup with text message and two buttons
@@ -343,29 +331,6 @@ export const useTelegramWebApp = () => {
     }
   }, [webApp]);
 
-  /**
-   * Shows the haptic feedback
-   */
-  const hapticFeedback = useCallback(
-    (
-      type: 'impact' | 'notification' | 'selectionChange',
-      style?: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft' | 'error' | 'success' | 'warning',
-      impactStyle?: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft'
-    ): void => {
-      if (webApp) {
-        if (type === 'impact' && impactStyle) {
-          webApp.HapticFeedback.impactOccurred(impactStyle);
-        } else if (type === 'notification' && (style === 'error' || style === 'success' || style === 'warning')) {
-          webApp.HapticFeedback.notificationOccurred(style);
-        } else if (type === 'notification') {
-          webApp.HapticFeedback.notificationOccurred('success');
-        } else if (type === 'selectionChange') {
-          webApp.HapticFeedback.selectionChanged();
-        }
-      }
-    },
-    [webApp]
-  );
 
   // Auto-expand on mount
   useEffect(() => {
@@ -386,7 +351,6 @@ export const useTelegramWebApp = () => {
     close,
 
     // Alerts and popups
-    showAlert,
     showConfirm,
     showPopup,
     showScanQrPopup,
@@ -426,9 +390,6 @@ export const useTelegramWebApp = () => {
     // Settings button
     showSettingsButton,
     hideSettingsButton,
-
-    // Haptic feedback
-    hapticFeedback,
   };
 };
 

@@ -11,6 +11,7 @@ import styles from "./CreateFamilyModal.module.scss";
 
 import { useUsers } from "@/providers/users";
 import { useFamilyInvites } from "@/providers/family-invites";
+import { useToast } from "@/providers/toast/hooks";
 import { useDebounce } from "@/hooks";
 
 interface CreateFamilyModalProps {
@@ -29,6 +30,7 @@ const CreateFamilyModal = ({
   const [pendingRequests, setPendingRequests] = useState<FamilyRequest[]>([]);
   const { searchByUsername } = useUsers();
   const { sendInvite } = useFamilyInvites();
+  const { toastSuccess, toastError, toastInfo } = useToast();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +71,7 @@ const CreateFamilyModal = ({
     );
 
     if (existingRequest) {
-      alert(CREATE_FAMILY_TEXT.ALERT_REQUEST_EXISTS);
+      toastInfo(CREATE_FAMILY_TEXT.ALERT_REQUEST_EXISTS);
       return;
     }
 
@@ -85,10 +87,10 @@ const CreateFamilyModal = ({
       };
       
       setPendingRequests([...pendingRequests, request]);
-      alert(CREATE_FAMILY_TEXT.ALERT_REQUEST_SENT);
+      toastSuccess(CREATE_FAMILY_TEXT.ALERT_REQUEST_SENT);
     } catch (error) {
       console.error('Failed to send invite:', error);
-      alert('Failed to send invite. Please try again.');
+      toastError('Failed to send invite. Please try again.');
     }
   };
 

@@ -3,13 +3,13 @@ import { Family } from '@/types';
 import { formatDate, copyToClipboard } from '@/utils/helpers';
 import { useCurrentUser, useAuthLoading } from '@/providers/auth';
 import { SEX_VALUES, SEX_EMOJIS, DASHBOARD_TEXT, EXTERNAL_URLS } from '@/constants';
-import { useTelegramWebApp } from '@/hooks/useTelegramWebApp';
+import { useToast } from '@/providers/toast/hooks';
 import styles from './Profile.module.scss';
 
 const Profile = (): JSX.Element => {
   const currentUser = useCurrentUser();
   const isLoading = useAuthLoading();
-  const { showAlert, hapticFeedback } = useTelegramWebApp();
+  const { toastSuccess, toastError } = useToast();
   const [family, setFamily] = useState<Family | null>(null);
   const [familyMember, setFamilyMember] = useState<{ name: string; sex: string } | null>(null);
   const [copied, setCopied] = useState(false);
@@ -39,14 +39,12 @@ const Profile = (): JSX.Element => {
     
     if (success) {
       setCopied(true);
-      hapticFeedback('notification', 'success');
-      showAlert('Invite link copied to clipboard!');
+      toastSuccess('Invite link copied to clipboard!');
       setTimeout(() => setCopied(false), 2000);
     } else {
-      hapticFeedback('notification', 'error');
-      showAlert('Failed to copy invite link. Please try again.');
+      toastError('Failed to copy invite link. Please try again.');
     }
-  }, [showAlert, hapticFeedback]);
+  }, [toastSuccess, toastError]);
 
   if (isLoading) {
     return <div>{DASHBOARD_TEXT.LOADING}</div>;

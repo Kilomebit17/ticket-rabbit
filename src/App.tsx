@@ -13,6 +13,7 @@ import {
 } from "@/providers/auth";
 import { UsersProvider } from "@/providers/users";
 import { FamilyInvitesProvider } from "@/providers/family-invites";
+import { ToastProvider } from "@/providers/toast";
 import { useTelegramWebApp } from "@/hooks";
 import { PROJECT_NAME } from "@/constants";
 import SexSelection from "./screens/SexSelection";
@@ -101,13 +102,15 @@ const AppContent = (): JSX.Element => {
 function App(): JSX.Element {
   return (
     <HttpClientProvider>
-      <AuthProvider>
-        <UsersProvider>
-          <FamilyInvitesProvider>
-            <AppContent />
-          </FamilyInvitesProvider>
-        </UsersProvider>
-      </AuthProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <UsersProvider>
+            <FamilyInvitesProvider>
+              <AppContent />
+            </FamilyInvitesProvider>
+          </UsersProvider>
+        </AuthProvider>
+      </ToastProvider>
     </HttpClientProvider>
   );
 }

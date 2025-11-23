@@ -3,6 +3,7 @@ import { generateId } from '@/utils/helpers';
 import { Family, Task, User } from '@/types';
 import { useCurrentUser } from '@/providers/auth';
 import { useFamilyInvites } from '@/providers/family-invites';
+import { useToast } from '@/providers/toast/hooks';
 import CreateFamilyModal from '@/components/CreateFamilyModal';
 import CreateTaskModal from '@/components/CreateTaskModal';
 import TaskCard from '@/components/TaskCard';
@@ -17,6 +18,7 @@ import styles from './Dashboard.module.scss';
 const Dashboard = (): JSX.Element => {
   const currentUser = useCurrentUser();
   const { state: invitesState, getInvites, respondToInvite } = useFamilyInvites();
+  const { toastError } = useToast();
   const [family, setFamily] = useState<Family | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [showCreateFamily, setShowCreateFamily] = useState(false);
@@ -80,7 +82,7 @@ const Dashboard = (): JSX.Element => {
       }
     } catch (error) {
       console.error('Failed to accept invite:', error);
-      alert('Failed to accept invite. Please try again.');
+      toastError('Failed to accept invite. Please try again.');
     }
   };
 
@@ -90,7 +92,7 @@ const Dashboard = (): JSX.Element => {
       // Invites list will be updated automatically by the reducer
     } catch (error) {
       console.error('Failed to reject invite:', error);
-      alert('Failed to reject invite. Please try again.');
+      toastError('Failed to reject invite. Please try again.');
     }
   };
 
