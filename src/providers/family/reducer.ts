@@ -25,6 +25,12 @@ export const reducer = (
         invites: action.invites,
       };
 
+    case EFamilyActionType.SET_SENT_INVITES:
+      return {
+        ...state,
+        sentInvites: action.sentInvites,
+      };
+
     case EFamilyActionType.SET_FAMILY:
       return {
         ...state,

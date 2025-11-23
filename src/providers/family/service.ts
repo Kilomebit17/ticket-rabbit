@@ -38,6 +38,7 @@ const transformBackendInvite = (backendInvite: IBackendFamilyInvite): FamilyInvi
       ? backendInvite.toUserId
       : ''),
     fromUser: fromUser || undefined,
+    toUser: toUser || undefined,
     status: backendInvite.status,
     createdAt: new Date(backendInvite.createdAt).getTime(),
   };
@@ -57,6 +58,10 @@ export const useFamilyService = (): IFamilyContext => {
 
   const setInvites = useCallback((invites: FamilyInvite[]): void => {
     dispatch({ type: EFamilyActionType.SET_INVITES, invites });
+  }, []);
+
+  const setSentInvites = useCallback((sentInvites: FamilyInvite[]): void => {
+    dispatch({ type: EFamilyActionType.SET_SENT_INVITES, sentInvites });
   }, []);
 
   const setFamily = useCallback((family: Family | null): void => {
@@ -102,8 +107,8 @@ export const useFamilyService = (): IFamilyContext => {
   );
 
   /**
-   * Get received family invites
-   * Only stores received invites (where user is the recipient)
+   * Get family invites (both received and sent)
+   * Stores received invites and sent invites separately
    */
   const getInvites = useCallback(async (): Promise<FamilyInvite[]> => {
     setLoading(true);
@@ -112,10 +117,14 @@ export const useFamilyService = (): IFamilyContext => {
         '/family/invites'
       );
       
-      // Transform only received invites (sent invites are not shown to the user)
+      // Transform received invites (where user is the recipient)
       const receivedInvites = (response.data.received || []).map(transformBackendInvite);
       
+      // Transform sent invites (where user is the sender)
+      const sentInvites = (response.data.sent || []).map(transformBackendInvite);
+      
       setInvites(receivedInvites);
+      setSentInvites(sentInvites);
       return receivedInvites;
     } catch (error: unknown) {
       const errorMessage =
@@ -125,11 +134,12 @@ export const useFamilyService = (): IFamilyContext => {
       setError(errorMessage);
       console.error(LOG_MESSAGES.ERROR, error);
       setInvites([]);
+      setSentInvites([]);
       throw error;
     } finally {
       setLoading(false);
     }
-  }, [httpClient, setLoading, setInvites, setError]);
+  }, [httpClient, setLoading, setInvites, setSentInvites, setError]);
 
   /**
    * Get family by ID
@@ -211,6 +221,7 @@ export const useFamilyService = (): IFamilyContext => {
     state,
     setLoading,
     setInvites,
+    setSentInvites,
     setFamily,
     setError,
     clearError,

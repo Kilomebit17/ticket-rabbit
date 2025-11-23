@@ -13,6 +13,7 @@ import {
 } from "@/providers/auth";
 import { UsersProvider } from "@/providers/users";
 import { FamilyProvider } from "@/providers/family";
+import { TasksProvider } from "@/providers/tasks";
 import { ToastProvider } from "@/providers/toast";
 import { useTelegramWebApp } from "@/hooks";
 import { PROJECT_NAME } from "@/constants";
@@ -106,7 +107,9 @@ function App(): JSX.Element {
         <AuthProvider>
           <UsersProvider>
             <FamilyProvider>
-              <AppContent />
+              <TasksProvider>
+                <AppContent />
+              </TasksProvider>
             </FamilyProvider>
           </UsersProvider>
         </AuthProvider>

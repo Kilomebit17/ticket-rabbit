@@ -125,6 +125,13 @@ export const DASHBOARD_TEXT = {
   INVITES_SUBTITLE: 'You have pending family invitations',
   NO_INVITES: 'No pending invites',
   INVITE_FROM: 'Invite from',
+  SENT_INVITES_TITLE: 'Sent Invites',
+  SENT_INVITES_SUBTITLE: 'Invites you have sent',
+  NO_SENT_INVITES: 'No sent invites',
+  INVITE_TO: 'Invite to',
+  INVITE_STATUS_PENDING: 'Pending',
+  INVITE_STATUS_ACCEPTED: 'Accepted',
+  INVITE_STATUS_REJECTED: 'Rejected',
   BUTTON_ACCEPT: 'Accept',
   BUTTON_REJECT: 'Reject',
 } as const;
@@ -151,6 +158,8 @@ export const ERROR_MESSAGES = {
   FAILED_TO_SEND_INVITE: 'Failed to send invite',
   FAILED_TO_GET_INVITES: 'Failed to get invites',
   FAILED_TO_RESPOND_INVITE: 'Failed to respond to invite',
+  FAILED_TO_CREATE_TASK: 'Failed to create task',
+  FAILED_TO_GET_TASKS: 'Failed to get tasks',
 } as const;
 
 // Console Log Messages

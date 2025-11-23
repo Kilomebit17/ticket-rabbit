@@ -43,6 +43,7 @@ export interface FamilyInvite {
   fromUserId: string;
   toUserId: string;
   fromUser?: User;
+  toUser?: User;
   status: 'pending' | 'accepted' | 'rejected';
   createdAt: number;
 }

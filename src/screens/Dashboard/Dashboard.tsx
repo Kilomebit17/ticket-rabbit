@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import { generateId } from "@/utils/helpers";
 import { Family, Task, User } from "@/types";
 import { useCurrentUser, useAuth } from "@/providers/auth";
 import { useFamily } from "@/providers/family";
+import { useTasks } from "@/providers/tasks";
 import { useToast } from "@/providers/toast/hooks";
 import CreateFamilyModal from "@/components/CreateFamilyModal";
 import CreateTaskModal from "@/components/CreateTaskModal";
 import TaskCard from "@/components/TaskCard";
 import PendingInvites from "@/components/PendingInvites";
 import FamilyCard from "@/components/FamilyCard";
-import { DASHBOARD_TEXT, TASK_STATUS } from "@/constants";
+import { DASHBOARD_TEXT, TASK_STATUS, SEX_VALUES, SEX_EMOJIS } from "@/constants";
 import styles from "./Dashboard.module.scss";
 
 const Dashboard = (): JSX.Element => {
@@ -24,10 +24,17 @@ const Dashboard = (): JSX.Element => {
     setFamily,
   } = useFamily();
   const { toastError } = useToast();
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const {
+    state: tasksState,
+    createTask: createTaskApi,
+    getMyTasks,
+    setTasks,
+  } = useTasks();
   const [showCreateFamily, setShowCreateFamily] = useState(false);
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [familyMember, setFamilyMember] = useState<User | null>(null);
+  
+  const tasks = tasksState.tasks;
 
   const family = familyState.family;
 
@@ -67,9 +74,15 @@ const Dashboard = (): JSX.Element => {
   // Handle family data when it's loaded
   useEffect(() => {
     if (family && currentUser) {
-      // TEMP: Replace with API call for tasks
-      const familyTasks: Task[] = []; // storage.getTasksByFamilyId(family.id);
-      setTasks(familyTasks);
+      // Fetch tasks for the current user
+      const fetchTasks = async (): Promise<void> => {
+        try {
+          await getMyTasks();
+        } catch (error) {
+          console.error("Failed to load tasks:", error);
+        }
+      };
+      fetchTasks();
 
       // Get the other family member
       const otherMemberId = family.members.find(
@@ -80,8 +93,11 @@ const Dashboard = (): JSX.Element => {
         const member: User | null = null; // storage.getUserById(otherMemberId);
         setFamilyMember(member);
       }
-    } 
-  }, [family, currentUser]);
+    } else {
+      // Clear tasks when there's no family
+      setTasks([]);
+    }
+  }, [family, currentUser, getMyTasks, setTasks]);
 
   const handleCreateFamily = () => {
     setShowCreateFamily(true);
@@ -124,42 +140,32 @@ const Dashboard = (): JSX.Element => {
     }
   };
 
-  const handleCreateTask = (taskName: string, price: number) => {
+  const handleCreateTask = async (taskName: string, price: number): Promise<void> => {
     if (!family || !currentUser) return;
 
-    const newTask: Task = {
-      id: generateId(),
-      familyId: family.id,
-      creatorId: currentUser.id,
-      name: taskName,
-      price,
-      status: TASK_STATUS.CREATED,
-      createdAt: Date.now(),
-    };
-
-    // TEMP: Replace with API call
-    // storage.createTask(newTask);
-    setTasks([...tasks, newTask]);
-    setShowCreateTask(false);
+    try {
+      await createTaskApi({
+        familyId: family.id,
+        name: taskName,
+        price,
+      });
+      setShowCreateTask(false);
+    } catch (error) {
+      console.error("Failed to create task:", error);
+      toastError("Failed to create task. Please try again.");
+    }
   };
 
   const handleTaskUpdate = (updatedTask: Task) => {
-    // TEMP: Replace with API call
-    // storage.updateTask(updatedTask);
+    // TODO: Replace with API call when update endpoint is available
+    // For now, update local state through provider
+    // Note: This will be replaced when update task API is implemented
     setTasks(tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
 
     // If task was approved, update user balance
     if (updatedTask.status === TASK_STATUS.APPROVED && updatedTask.solverId) {
-      // TEMP: Replace with API call
-      const solver: User | null = null; // storage.getUserById(updatedTask.solverId);
-      if (solver) {
-        (solver as User).balance += updatedTask.price;
-        // TEMP: Replace with API call
-        // storage.updateUser(solver);
-
-        // Note: User balance is managed by the backend API
-        // The auth state will be updated when the user data is refreshed
-      }
+      // Note: User balance is managed by the backend API
+      // The auth state will be updated when the user data is refreshed
     }
   };
 
@@ -203,6 +209,10 @@ const Dashboard = (): JSX.Element => {
       invite.status === "pending" && invite.toUserId === currentUser?.id
   );
 
+  const sentInvites = familyState.sentInvites.filter(
+    (invite) => invite.status === "pending"
+  );
+
   return (
     <div className={styles.dashboard}>
       {!family && !familyState.isLoading && (
@@ -227,6 +237,63 @@ const Dashboard = (): JSX.Element => {
             >
               {DASHBOARD_TEXT.BUTTON_CREATE_FAMILY}
             </button>
+
+            {sentInvites.length > 0 && (
+              <div className={styles.sentInvitesSection}>
+                <h3 className={styles.sentInvitesTitle}>
+                  {DASHBOARD_TEXT.SENT_INVITES_TITLE}
+                </h3>
+                <p className={styles.sentInvitesSubtitle}>
+                  {DASHBOARD_TEXT.SENT_INVITES_SUBTITLE}
+                </p>
+                <div className={styles.sentInvitesList}>
+                  {sentInvites.map((invite) => (
+                    <div key={invite.id} className={styles.sentInviteItem}>
+                      <div className={styles.sentInviteInfo}>
+                        <div className={styles.sentInviteAvatar}>
+                          {invite.toUser?.photoUrl ? (
+                            <img
+                              src={invite.toUser.photoUrl}
+                              alt={invite.toUser.name || 'User'}
+                              className={styles.avatarImage}
+                            />
+                          ) : (
+                            <span>
+                              {invite.toUser?.sex === SEX_VALUES.MAN
+                                ? SEX_EMOJIS.MAN
+                                : SEX_EMOJIS.WOMAN}
+                            </span>
+                          )}
+                        </div>
+                        <div className={styles.sentInviteDetails}>
+                          <span className={styles.sentInviteTo}>
+                            {DASHBOARD_TEXT.INVITE_TO}
+                          </span>
+                          <span className={styles.sentInviteName}>
+                            {invite.toUser?.name || 'Unknown User'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={styles.sentInviteStatus}>
+                        <span
+                          className={`${styles.statusBadge} ${
+                            invite.status === 'pending'
+                              ? styles.statusBadgePending
+                              : invite.status === 'accepted'
+                              ? styles.statusBadgeAccepted
+                              : styles.statusBadgeRejected
+                          }`}
+                        >
+                          {invite.status === 'pending' && DASHBOARD_TEXT.INVITE_STATUS_PENDING}
+                          {invite.status === 'accepted' && DASHBOARD_TEXT.INVITE_STATUS_ACCEPTED}
+                          {invite.status === 'rejected' && DASHBOARD_TEXT.INVITE_STATUS_REJECTED}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </>
       )}

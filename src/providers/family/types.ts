@@ -12,6 +12,7 @@ export interface IReducerAction<T = string> {
  */
 export interface IFamilyState {
   invites: FamilyInvite[];
+  sentInvites: FamilyInvite[];
   family: Family | null;
   isLoading: boolean;
   error: string | null;
@@ -23,6 +24,7 @@ export interface IFamilyState {
 export enum EFamilyActionType {
   SET_LOADING = 'SET_LOADING',
   SET_INVITES = 'SET_INVITES',
+  SET_SENT_INVITES = 'SET_SENT_INVITES',
   SET_FAMILY = 'SET_FAMILY',
   SET_ERROR = 'SET_ERROR',
   CLEAR_ERROR = 'CLEAR_ERROR',
@@ -41,6 +43,11 @@ export interface IActionSetLoading
 export interface IActionSetInvites
   extends IReducerAction<EFamilyActionType.SET_INVITES> {
   invites: FamilyInvite[];
+}
+
+export interface IActionSetSentInvites
+  extends IReducerAction<EFamilyActionType.SET_SENT_INVITES> {
+  sentInvites: FamilyInvite[];
 }
 
 export interface IActionSetFamily
@@ -72,6 +79,7 @@ export interface IActionRemoveInvite
 export type FamilyActions =
   | IActionSetLoading
   | IActionSetInvites
+  | IActionSetSentInvites
   | IActionSetFamily
   | IActionSetError
   | IActionClearError
@@ -143,6 +151,7 @@ export interface IFamilyContext {
   state: IFamilyState;
   setLoading: (loading: boolean) => void;
   setInvites: (invites: FamilyInvite[]) => void;
+  setSentInvites: (sentInvites: FamilyInvite[]) => void;
   setFamily: (family: Family | null) => void;
   setError: (error: string) => void;
   clearError: () => void;

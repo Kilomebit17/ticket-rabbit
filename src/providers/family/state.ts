@@ -5,6 +5,7 @@ import type { IFamilyState } from './types';
  */
 const initialState = (): IFamilyState => ({
   invites: [],
+  sentInvites: [],
   family: null,
   isLoading: true,
   error: null,
