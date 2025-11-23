@@ -58,7 +58,17 @@ const FriendDetail = () => {
 
       <div className={styles.profileSection}>
         <div className={styles.avatar}>
-          <span className={styles.emoji}>{user.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}</span>
+          {user.photoUrl ? (
+            <img
+              src={user.photoUrl}
+              alt={user.name}
+              className={styles.avatarImage}
+            />
+          ) : (
+            <span className={styles.emoji}>
+              {user.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}
+            </span>
+          )}
         </div>
         <h2 className={styles.name}>{user.name}</h2>
         <div className={styles.balance}>

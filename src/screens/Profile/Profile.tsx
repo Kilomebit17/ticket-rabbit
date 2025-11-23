@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Family } from '@/types';
+import { User } from '@/types';
 import { formatDate, copyToClipboard } from '@/utils/helpers';
 import { useCurrentUser, useAuthLoading } from '@/providers/auth';
+import { useFamily } from '@/providers/family';
 import { SEX_VALUES, SEX_EMOJIS, DASHBOARD_TEXT, EXTERNAL_URLS } from '@/constants';
 import { useToast } from '@/providers/toast/hooks';
 import styles from './Profile.module.scss';
@@ -9,29 +10,71 @@ import styles from './Profile.module.scss';
 const Profile = (): JSX.Element => {
   const currentUser = useCurrentUser();
   const isLoading = useAuthLoading();
+  const {
+    state: familyState,
+    getInvites,
+    getFamily,
+    clearFamily,
+  } = useFamily();
   const { toastSuccess, toastError } = useToast();
-  const [family, setFamily] = useState<Family | null>(null);
-  const [familyMember, setFamilyMember] = useState<{ name: string; sex: string } | null>(null);
+  const [familyMember, setFamilyMember] = useState<User | null>(null);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    if (currentUser) {
-      // TEMP: Replace with API call
-      const userFamily: Family | null = null; // storage.getFamilyByUserId(currentUser.id);
-      setFamily(userFamily || null);
+  const family = familyState.family;
 
-      if (userFamily) {
-        const otherMemberId = (userFamily as Family).members.find((id: string) => id !== currentUser.id);
-        if (otherMemberId) {
-          // TEMP: Replace with API call
-          const member: { name: string; sex: string } | null = null; // storage.getUserById(otherMemberId);
-          if (member) {
-            setFamilyMember({ name: (member as { name: string; sex: string }).name, sex: (member as { name: string; sex: string }).sex });
-          }
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const loadData = async (): Promise<void> => {
+      // Load family invites
+      if (!family) {
+        try {
+          await getInvites();
+        } catch (error) {
+          console.error('Failed to load invites:', error);
         }
       }
+
+      // Get family ID from user's families array
+      const familyId = currentUser.familyId;
+      if (familyId && !family) {
+        try {
+          await getFamily(familyId);
+        } catch (error) {
+          console.error('Failed to load family:', error);
+          toastError('Failed to load family. Please try again.');
+        }
+      } else if (!familyId) {
+        clearFamily();
+      }
+    };
+
+    loadData();
+  }, [
+    currentUser,
+    family,
+    getInvites,
+    getFamily,
+    clearFamily,
+    toastError,
+  ]);
+
+  // Handle family data when it's loaded
+  useEffect(() => {
+    if (family && currentUser) {
+      // Get the other family member
+      const otherMemberId = family.members.find(
+        (id: string) => id !== currentUser.id
+      );
+      if (otherMemberId) {
+        // TEMP: Replace with API call
+        const member: User | null = null; // storage.getUserById(otherMemberId);
+        setFamilyMember(member);
+      }
+    } else if (!family) {
+      setFamilyMember(null);
     }
-  }, [currentUser]);
+  }, [family, currentUser]);
 
   const handleCopyInviteLink = useCallback(async () => {
     const inviteLink = EXTERNAL_URLS.TELEGRAM_BOT;
@@ -62,7 +105,17 @@ const Profile = (): JSX.Element => {
         <h3 className={styles.sectionTitle}>Personal Information</h3>
         <div className={styles.infoCard}>
           <div className={styles.avatar}>
-            <span className={styles.emoji}>{currentUser.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}</span>
+            {currentUser.photoUrl ? (
+              <img
+                src={currentUser.photoUrl}
+                alt={currentUser.name}
+                className={styles.avatarImage}
+              />
+            ) : (
+              <span className={styles.emoji}>
+                {currentUser.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}
+              </span>
+            )}
           </div>
           <div className={styles.info}>
             <div className={styles.infoRow}>

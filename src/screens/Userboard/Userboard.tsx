@@ -38,7 +38,17 @@ const Userboard = (): JSX.Element => {
               onClick={() => handleUserClick(user.id)}
             >
               <div className={styles.userAvatar}>
-                <span className={styles.emoji}>{user.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}</span>
+                {user.photoUrl ? (
+                  <img
+                    src={user.photoUrl}
+                    alt={user.name}
+                    className={styles.avatarImage}
+                  />
+                ) : (
+                  <span className={styles.emoji}>
+                    {user.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}
+                  </span>
+                )}
               </div>
               <div className={styles.userInfo}>
                 <h3 className={styles.userName}>{user.name}</h3>

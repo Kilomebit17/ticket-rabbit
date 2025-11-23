@@ -33,11 +33,19 @@ const PendingInvites = ({
           <div key={invite.id} className={styles.inviteItem}>
             <div className={styles.inviteInfo}>
               <div className={styles.inviteAvatar}>
-                <span>
-                  {invite.fromUser?.sex === SEX_VALUES.MAN
-                    ? SEX_EMOJIS.MAN
-                    : SEX_EMOJIS.WOMAN}
-                </span>
+                {invite.fromUser?.photoUrl ? (
+                  <img
+                    src={invite.fromUser.photoUrl}
+                    alt={invite.fromUser.name || 'User'}
+                    className={styles.avatarImage}
+                  />
+                ) : (
+                  <span>
+                    {invite.fromUser?.sex === SEX_VALUES.MAN
+                      ? SEX_EMOJIS.MAN
+                      : SEX_EMOJIS.WOMAN}
+                  </span>
+                )}
               </div>
               <div className={styles.inviteDetails}>
                 <span className={styles.inviteFrom}>

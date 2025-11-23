@@ -8,20 +8,22 @@ export interface IReducerAction<T = string> {
 }
 
 /**
- * Family invites state interface
+ * Family state interface
  */
-export interface IFamilyInvitesState {
+export interface IFamilyState {
   invites: FamilyInvite[];
+  family: Family | null;
   isLoading: boolean;
   error: string | null;
 }
 
 /**
- * Family invites action types enum
+ * Family action types enum
  */
-export enum EFamilyInvitesActionType {
+export enum EFamilyActionType {
   SET_LOADING = 'SET_LOADING',
   SET_INVITES = 'SET_INVITES',
+  SET_FAMILY = 'SET_FAMILY',
   SET_ERROR = 'SET_ERROR',
   CLEAR_ERROR = 'CLEAR_ERROR',
   ADD_INVITE = 'ADD_INVITE',
@@ -29,42 +31,48 @@ export enum EFamilyInvitesActionType {
 }
 
 /**
- * Family invites action interfaces
+ * Family action interfaces
  */
 export interface IActionSetLoading
-  extends IReducerAction<EFamilyInvitesActionType.SET_LOADING> {
+  extends IReducerAction<EFamilyActionType.SET_LOADING> {
   loading: boolean;
 }
 
 export interface IActionSetInvites
-  extends IReducerAction<EFamilyInvitesActionType.SET_INVITES> {
+  extends IReducerAction<EFamilyActionType.SET_INVITES> {
   invites: FamilyInvite[];
 }
 
+export interface IActionSetFamily
+  extends IReducerAction<EFamilyActionType.SET_FAMILY> {
+  family: Family | null;
+}
+
 export interface IActionSetError
-  extends IReducerAction<EFamilyInvitesActionType.SET_ERROR> {
+  extends IReducerAction<EFamilyActionType.SET_ERROR> {
   error: string;
 }
 
 export interface IActionClearError
-  extends IReducerAction<EFamilyInvitesActionType.CLEAR_ERROR> {}
+  extends IReducerAction<EFamilyActionType.CLEAR_ERROR> {}
 
 export interface IActionAddInvite
-  extends IReducerAction<EFamilyInvitesActionType.ADD_INVITE> {
+  extends IReducerAction<EFamilyActionType.ADD_INVITE> {
   invite: FamilyInvite;
 }
 
 export interface IActionRemoveInvite
-  extends IReducerAction<EFamilyInvitesActionType.REMOVE_INVITE> {
+  extends IReducerAction<EFamilyActionType.REMOVE_INVITE> {
   inviteId: string;
 }
 
 /**
- * Union type for all family invites actions
+ * Union type for all family actions
  */
-export type FamilyInvitesActions =
+export type FamilyActions =
   | IActionSetLoading
   | IActionSetInvites
+  | IActionSetFamily
   | IActionSetError
   | IActionClearError
   | IActionAddInvite
@@ -122,19 +130,29 @@ export interface IRespondInviteResponse {
 }
 
 /**
- * Family invites context interface
+ * Get family response
  */
-export interface IFamilyInvitesContext {
-  state: IFamilyInvitesState;
+export interface IGetFamilyResponse {
+  family: Family;
+}
+
+/**
+ * Family context interface
+ */
+export interface IFamilyContext {
+  state: IFamilyState;
   setLoading: (loading: boolean) => void;
   setInvites: (invites: FamilyInvite[]) => void;
+  setFamily: (family: Family | null) => void;
   setError: (error: string) => void;
   clearError: () => void;
   sendInvite: (toUserId: string) => Promise<FamilyInvite>;
   getInvites: () => Promise<FamilyInvite[]>;
+  getFamily: (familyId: string) => Promise<Family>;
   respondToInvite: (
     inviteId: string,
     accept: boolean
   ) => Promise<IRespondInviteResponse>;
+  clearFamily: () => void;
 }
 

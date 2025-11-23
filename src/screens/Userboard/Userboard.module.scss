@@ -80,6 +80,13 @@
   font-size: 32px;
 }
 
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 .userInfo {
   flex: 1;
   display: flex;

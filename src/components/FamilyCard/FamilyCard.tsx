@@ -28,9 +28,17 @@ const FamilyCard = ({
       <div className={styles.familyMembers}>
         <div className={styles.member}>
           <div className={styles.memberAvatar}>
-            <span>
-              {currentUser.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}
-            </span>
+            {currentUser.photoUrl ? (
+              <img
+                src={currentUser.photoUrl}
+                alt={currentUser.name}
+                className={styles.avatarImage}
+              />
+            ) : (
+              <span>
+                {currentUser.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}
+              </span>
+            )}
           </div>
           <div className={styles.memberInfo}>
             <span className={styles.memberName}>{currentUser.name}</span>
@@ -43,9 +51,17 @@ const FamilyCard = ({
         </div>
         <div className={styles.member}>
           <div className={styles.memberAvatar}>
-            <span>
-              {familyMember.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}
-            </span>
+            {familyMember.photoUrl ? (
+              <img
+                src={familyMember.photoUrl}
+                alt={familyMember.name}
+                className={styles.avatarImage}
+              />
+            ) : (
+              <span>
+                {familyMember.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}
+              </span>
+            )}
           </div>
           <div className={styles.memberInfo}>
             <span className={styles.memberName}>{familyMember.name}</span>

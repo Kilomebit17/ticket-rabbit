@@ -1,49 +1,55 @@
 import type {
-  IFamilyInvitesState,
-  FamilyInvitesActions,
+  IFamilyState,
+  FamilyActions,
 } from './types';
-import { EFamilyInvitesActionType } from './types';
+import { EFamilyActionType } from './types';
 import initialState from './state';
 
 /**
- * Family invites reducer
+ * Family reducer
  */
 export const reducer = (
-  state: IFamilyInvitesState = initialState(),
-  action: FamilyInvitesActions
-): IFamilyInvitesState => {
+  state: IFamilyState = initialState(),
+  action: FamilyActions
+): IFamilyState => {
   switch (action.type) {
-    case EFamilyInvitesActionType.SET_LOADING:
+    case EFamilyActionType.SET_LOADING:
       return {
         ...state,
         isLoading: action.loading,
       };
 
-    case EFamilyInvitesActionType.SET_INVITES:
+    case EFamilyActionType.SET_INVITES:
       return {
         ...state,
         invites: action.invites,
       };
 
-    case EFamilyInvitesActionType.SET_ERROR:
+    case EFamilyActionType.SET_FAMILY:
+      return {
+        ...state,
+        family: action.family,
+      };
+
+    case EFamilyActionType.SET_ERROR:
       return {
         ...state,
         error: action.error,
       };
 
-    case EFamilyInvitesActionType.CLEAR_ERROR:
+    case EFamilyActionType.CLEAR_ERROR:
       return {
         ...state,
         error: null,
       };
 
-    case EFamilyInvitesActionType.ADD_INVITE:
+    case EFamilyActionType.ADD_INVITE:
       return {
         ...state,
         invites: [...state.invites, action.invite],
       };
 
-    case EFamilyInvitesActionType.REMOVE_INVITE:
+    case EFamilyActionType.REMOVE_INVITE:
       return {
         ...state,
         invites: state.invites.filter(

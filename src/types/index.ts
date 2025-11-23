@@ -7,6 +7,8 @@ export interface User {
   name: string;
   sex: Sex;
   balance: number;
+  familyId: string;
+  photoUrl?: string;
 }
 
 export interface Family {

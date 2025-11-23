@@ -88,6 +88,14 @@
   font-size: 24px;
   flex-shrink: 0;
   box-shadow: $shadow-sm;
+  overflow: hidden;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .memberInfo {

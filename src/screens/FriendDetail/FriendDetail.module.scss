@@ -54,6 +54,13 @@
   font-size: 64px;
 }
 
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 .name {
   font-size: 28px;
   font-weight: 700;

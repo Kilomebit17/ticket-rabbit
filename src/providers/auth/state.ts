@@ -5,7 +5,7 @@ import type { IAuthState } from './types';
  */
 const initialState = (): IAuthState => ({
   user: null,
-  isLoading: false,
+  isLoading: true,
   error: null,
 });
 

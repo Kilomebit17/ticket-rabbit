@@ -1,15 +1,16 @@
 import { useReducer, useCallback } from 'react';
-import type { FamilyInvite } from '@/types';
+import type { FamilyInvite, Family } from '@/types';
 import type {
-  IFamilyInvitesContext,
+  IFamilyContext,
   ISendInviteRequest,
   ISendInviteResponse,
   IGetInvitesResponse,
   IRespondInviteRequest,
   IRespondInviteResponse,
   IBackendFamilyInvite,
+  IGetFamilyResponse,
 } from './types';
-import { EFamilyInvitesActionType } from './types';
+import { EFamilyActionType } from './types';
 import initialState from './state';
 import { reducer } from './reducer';
 import { useHttpClient } from '@/providers/http-client';
@@ -43,27 +44,31 @@ const transformBackendInvite = (backendInvite: IBackendFamilyInvite): FamilyInvi
 };
 
 /**
- * Family invites service hook
+ * Family service hook
  * Combines state management with API calls
  */
-export const useFamilyInvitesService = (): IFamilyInvitesContext => {
+export const useFamilyService = (): IFamilyContext => {
   const httpClient = useHttpClient();
   const [state, dispatch] = useReducer(reducer, initialState());
 
   const setLoading = useCallback((loading: boolean): void => {
-    dispatch({ type: EFamilyInvitesActionType.SET_LOADING, loading });
+    dispatch({ type: EFamilyActionType.SET_LOADING, loading });
   }, []);
 
   const setInvites = useCallback((invites: FamilyInvite[]): void => {
-    dispatch({ type: EFamilyInvitesActionType.SET_INVITES, invites });
+    dispatch({ type: EFamilyActionType.SET_INVITES, invites });
+  }, []);
+
+  const setFamily = useCallback((family: Family | null): void => {
+    dispatch({ type: EFamilyActionType.SET_FAMILY, family });
   }, []);
 
   const setError = useCallback((error: string): void => {
-    dispatch({ type: EFamilyInvitesActionType.SET_ERROR, error });
+    dispatch({ type: EFamilyActionType.SET_ERROR, error });
   }, []);
 
   const clearError = useCallback((): void => {
-    dispatch({ type: EFamilyInvitesActionType.CLEAR_ERROR });
+    dispatch({ type: EFamilyActionType.CLEAR_ERROR });
   }, []);
 
   /**
@@ -127,6 +132,34 @@ export const useFamilyInvitesService = (): IFamilyInvitesContext => {
   }, [httpClient, setLoading, setInvites, setError]);
 
   /**
+   * Get family by ID
+   */
+  const getFamily = useCallback(
+    async (familyId: string): Promise<Family> => {
+      setLoading(true);
+      try {
+        const response = await httpClient.get<IGetFamilyResponse>(
+          `/family/${familyId}`
+        );
+        const fetchedFamily = response.data.family;
+        setFamily(fetchedFamily);
+        return fetchedFamily;
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : ERROR_MESSAGES.FAILED_TO_GET_INVITES; // TODO: Add specific error message
+        setError(errorMessage);
+        console.error(LOG_MESSAGES.ERROR, error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [httpClient, setLoading, setFamily, setError]
+  );
+
+  /**
    * Respond to family invite (accept or reject)
    */
   const respondToInvite = useCallback(
@@ -143,9 +176,13 @@ export const useFamilyInvitesService = (): IFamilyInvitesContext => {
         const result = response.data;
         // Remove invite from list after response
         dispatch({
-          type: EFamilyInvitesActionType.REMOVE_INVITE,
+          type: EFamilyActionType.REMOVE_INVITE,
           inviteId,
         });
+        // If family was created, update state
+        if (result.family) {
+          setFamily(result.family);
+        }
         return result;
       } catch (error: unknown) {
         const errorMessage =
@@ -159,18 +196,29 @@ export const useFamilyInvitesService = (): IFamilyInvitesContext => {
         setLoading(false);
       }
     },
-    [httpClient, setLoading, setError]
+    [httpClient, setLoading, setFamily, setError]
   );
+
+  /**
+   * Clear family from state
+   * Used when user no longer has a familyId
+   */
+  const clearFamily = useCallback((): void => {
+    setFamily(null);
+  }, [setFamily]);
 
   return {
     state,
     setLoading,
     setInvites,
+    setFamily,
     setError,
     clearError,
     sendInvite,
     getInvites,
+    getFamily,
     respondToInvite,
+    clearFamily,
   };
 };
 

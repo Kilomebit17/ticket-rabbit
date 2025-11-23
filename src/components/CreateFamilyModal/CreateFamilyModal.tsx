@@ -10,7 +10,7 @@ import {
 import styles from "./CreateFamilyModal.module.scss";
 
 import { useUsers } from "@/providers/users";
-import { useFamilyInvites } from "@/providers/family-invites";
+import { useFamily } from "@/providers/family";
 import { useToast } from "@/providers/toast/hooks";
 import { useDebounce } from "@/hooks";
 
@@ -29,7 +29,7 @@ const CreateFamilyModal = ({
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [pendingRequests, setPendingRequests] = useState<FamilyRequest[]>([]);
   const { searchByUsername } = useUsers();
-  const { sendInvite } = useFamilyInvites();
+  const { sendInvite } = useFamily();
   const { toastSuccess, toastError, toastInfo } = useToast();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -185,11 +185,19 @@ const CreateFamilyModal = ({
               return (
                 <div key={user.id} className={styles.userItem}>
                   <div className={styles.userInfo}>
-                    <span className={styles.userEmoji}>
-                      {user.sex === SEX_VALUES.MAN
-                        ? SEX_EMOJIS.MAN
-                        : SEX_EMOJIS.WOMAN}
-                    </span>
+                    {user.photoUrl ? (
+                      <img
+                        src={user.photoUrl}
+                        alt={user.name}
+                        className={styles.userAvatar}
+                      />
+                    ) : (
+                      <span className={styles.userEmoji}>
+                        {user.sex === SEX_VALUES.MAN
+                          ? SEX_EMOJIS.MAN
+                          : SEX_EMOJIS.WOMAN}
+                      </span>
+                    )}
                     <div>
                       <div className={styles.userName}>{user.name}</div>
                       <div className={styles.userSex}>{user.sex}</div>
