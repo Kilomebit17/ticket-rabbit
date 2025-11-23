@@ -37,7 +37,7 @@ const AppContent = (): JSX.Element => {
   // Hook is safe to call even if not in Telegram (it handles the check internally)
   useTelegramWebApp();
 
-  const { checkUser } = useAuth();
+  const { getUserInfo } = useAuth();
   const currentUser = useCurrentUser();
   const isLoading = useAuthLoading();
 
@@ -46,8 +46,8 @@ const AppContent = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    checkUser();
-  }, [checkUser]);
+    getUserInfo();
+  }, [getUserInfo]);
 
   // Check if running in Telegram WebApp early (only in production)
   if (isProduction && !isTelegram) {

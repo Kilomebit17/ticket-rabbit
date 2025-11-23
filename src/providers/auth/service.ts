@@ -52,9 +52,9 @@ export const useAuthService = (): IAuthContext => {
   }, []);
 
   /**
-   * Check if current user exists
+   * Get current user info
    */
-  const checkUser = useCallback(async (): Promise<void> => {
+  const getUserInfo = useCallback(async (): Promise<void> => {
     setLoading(true);
     try {
       const response = await httpClient.get<IGetUserResponse>('/auth/me');
@@ -101,7 +101,7 @@ export const useAuthService = (): IAuthContext => {
     setError,
     clearError,
     logout,
-    checkUser,
+    getUserInfo,
     createUser,
   };
 };

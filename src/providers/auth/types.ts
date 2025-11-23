@@ -93,7 +93,7 @@ export interface IAuthContext {
   setError: (error: string) => void;
   clearError: () => void;
   logout: () => void;
-  checkUser: () => Promise<void>;
+  getUserInfo: () => Promise<void>;
   createUser: (data: ICreateUserRequest) => Promise<User>;
 }
 

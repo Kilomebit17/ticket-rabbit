@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { generateId } from "@/utils/helpers";
 import { Family, Task, User } from "@/types";
-import { useCurrentUser } from "@/providers/auth";
+import { useCurrentUser, useAuth } from "@/providers/auth";
 import { useFamily } from "@/providers/family";
 import { useToast } from "@/providers/toast/hooks";
 import CreateFamilyModal from "@/components/CreateFamilyModal";
@@ -14,6 +14,7 @@ import styles from "./Dashboard.module.scss";
 
 const Dashboard = (): JSX.Element => {
   const currentUser = useCurrentUser();
+  const { getUserInfo } = useAuth();
   const {
     state: familyState,
     getInvites,
@@ -105,6 +106,7 @@ const Dashboard = (): JSX.Element => {
 
     try {
       await respondToInvite(inviteId, true);
+      await getUserInfo();
       await getInvites();
     } catch (error) {
       console.error("Failed to accept invite:", error);

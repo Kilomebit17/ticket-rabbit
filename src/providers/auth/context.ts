@@ -13,7 +13,7 @@ export const AuthContext = createContext<IAuthContext>({
   setError: () => {},
   clearError: () => {},
   logout: () => {},
-  checkUser: async () => {},
+  getUserInfo: async () => {},
   createUser: async () => {
     throw new Error('AuthProvider not initialized');
   },
