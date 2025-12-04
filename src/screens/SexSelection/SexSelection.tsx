@@ -5,9 +5,9 @@ import {
   SEX_SELECTION_TEXT,
   SEX_VALUES,
   SEX_LABELS,
-  SEX_EMOJIS,
   LOG_MESSAGES,
 } from "@/constants";
+import { AvatarIcon } from "@/components/Icons/AvatarIcon";
 import styles from "./SexSelection.module.scss";
 
 const SexSelection = (): JSX.Element => {
@@ -81,7 +81,7 @@ const SexSelection = (): JSX.Element => {
                 selectedSex === SEX_VALUES.MAN ? styles.selected : ""
               }`}
             >
-              <span className={styles.emoji}>{SEX_EMOJIS.MAN}</span>
+              <span className={styles.emoji}><AvatarIcon sex={SEX_VALUES.MAN} /></span>
               <span className={styles.label}>{SEX_LABELS.MAN}</span>
             </button>
             <button
@@ -95,7 +95,7 @@ const SexSelection = (): JSX.Element => {
                 selectedSex === SEX_VALUES.WOMAN ? styles.selected : ""
               }`}
             >
-              <span className={styles.emoji}>{SEX_EMOJIS.WOMAN}</span>
+              <span className={styles.emoji}><AvatarIcon sex={SEX_VALUES.WOMAN} /></span>
               <span className={styles.label}>{SEX_LABELS.WOMAN}</span>
             </button>
           </div>

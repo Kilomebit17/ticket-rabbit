@@ -35,12 +35,6 @@ export const SEX_LABELS = {
   WOMAN: 'Woman',
 } as const;
 
-// Sex Emojis
-export const SEX_EMOJIS = {
-  MAN: '👨',
-  WOMAN: '👩',
-} as const;
-
 // Task Status Values
 export const TASK_STATUS = {
   CREATED: 'Created',
@@ -147,7 +141,7 @@ export const TASK_CARD_TEXT = {
   UNKNOWN: 'Unknown',
   BUTTON_SOLVE: 'Solve Task',
   BUTTON_APPROVE: 'Approve Task',
-  BADGE_APPROVED: '✓ Approved',
+  BADGE_APPROVED: 'Approved',
 } as const;
 
 // Error Messages
@@ -160,6 +154,8 @@ export const ERROR_MESSAGES = {
   FAILED_TO_RESPOND_INVITE: 'Failed to respond to invite',
   FAILED_TO_CREATE_TASK: 'Failed to create task',
   FAILED_TO_GET_TASKS: 'Failed to get tasks',
+  FAILED_TO_SOLVE_TASK: 'Failed to solve task',
+  FAILED_TO_APPROVE_TASK: 'Failed to approve task',
 } as const;
 
 // Console Log Messages

@@ -12,10 +12,30 @@ export const formatDate = (timestamp: number): string => {
 };
 
 /**
+ * Calculates the number of days between a timestamp and today
+ * @param timestamp - Timestamp in milliseconds
+ * @returns Number of days (rounded down)
+ */
+export const calculateDaysTogether = (timestamp: number): number => {
+  const startDate = new Date(timestamp);
+  const today = new Date();
+  
+  // Reset time to midnight for accurate day calculation
+  startDate.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+  
+  const diffTime = today.getTime() - startDate.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  return diffDays >= 0 ? diffDays : 0;
+};
+
+/**
  * Copies text to clipboard
  * @param text - Text to copy to clipboard
  * @returns Promise that resolves to true if successful, false otherwise
  */
+
 export const copyToClipboard = async (text: string): Promise<boolean> => {
   try {
     if (navigator.clipboard && window.isSecureContext) {

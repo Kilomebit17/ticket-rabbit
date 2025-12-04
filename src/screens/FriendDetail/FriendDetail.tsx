@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { User, Family } from '@/types';
 import { formatDate } from '@/utils/helpers';
-import { SEX_VALUES, SEX_EMOJIS } from '@/constants';
+import { SEX_VALUES } from '@/constants';
+import { TicketIcon } from '@/components/Icons';
+import { AvatarIcon } from '@/components/Icons/AvatarIcon';
 import styles from './FriendDetail.module.scss';
 
 const FriendDetail = () => {
@@ -41,8 +43,8 @@ const FriendDetail = () => {
     return (
       <div className={styles.notFound}>
         <p>User not found</p>
-        <button onClick={() => navigate('/userboard')} className={styles.backButton}>
-          Back to Userboard
+        <button onClick={() => navigate('/')} className={styles.backButton}>
+          Back to Dashboard
         </button>
       </div>
     );
@@ -66,13 +68,13 @@ const FriendDetail = () => {
             />
           ) : (
             <span className={styles.emoji}>
-              {user.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}
+              <AvatarIcon sex={user.sex} />
             </span>
           )}
         </div>
         <h2 className={styles.name}>{user.name}</h2>
         <div className={styles.balance}>
-          <span className={styles.ticketIcon}>🎫</span>
+          <span className={styles.ticketIcon}><TicketIcon /></span>
           <span className={styles.balanceAmount}>{user.balance}</span>
         </div>
       </div>
@@ -91,7 +93,7 @@ const FriendDetail = () => {
           <div className={styles.infoRow}>
             <span className={styles.label}>Balance:</span>
             <span className={styles.balanceValue}>
-              <span className={styles.ticketIcon}>🎫</span>
+              <span className={styles.ticketIcon}><TicketIcon /></span>
               {user.balance}
             </span>
           </div>
@@ -104,19 +106,28 @@ const FriendDetail = () => {
           <div className={styles.familyCard}>
             <div className={styles.familyInfo}>
               <div className={styles.infoRow}>
-                <span className={styles.label}>Family ID:</span>
-                <span className={styles.value}>{family.id}</span>
-              </div>
-              <div className={styles.infoRow}>
                 <span className={styles.label}>Created:</span>
                 <span className={styles.value}>{formatDate(family.createdAt)}</span>
               </div>
               {familyMember && (
                 <div className={styles.infoRow}>
                   <span className={styles.label}>Family Member:</span>
-                  <span className={styles.value}>
-                    {familyMember.name} ({familyMember.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN})
-                  </span>
+                  <div className={styles.familyMemberValue}>
+                    <div className={styles.familyMemberAvatar}>
+                      {familyMember.photoUrl ? (
+                        <img
+                          src={familyMember.photoUrl}
+                          alt={familyMember.name}
+                          className={styles.familyMemberAvatarImage}
+                        />
+                      ) : (
+                        <span className={styles.familyMemberAvatarIcon}>
+                          <AvatarIcon sex={familyMember.sex} />
+                        </span>
+                      )}
+                    </div>
+                    <span className={styles.value}>{familyMember.name}</span>
+                  </div>
                 </div>
               )}
             </div>

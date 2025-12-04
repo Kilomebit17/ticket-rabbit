@@ -95,14 +95,38 @@ export interface ICreateTaskResponse {
 }
 
 /**
- * Get tasks response
+ * Get family tasks response
  */
-export interface IGetTasksResponse {
-  tasks: {
-    created: Task[];
-    solved: Task[];
-    approved: Task[];
-  };
+export interface IGetFamilyTasksResponse {
+  tasks: Task[];
+}
+
+/**
+ * Solve task request body
+ */
+export interface ISolveTaskRequest {
+  taskId: string;
+}
+
+/**
+ * Solve task response
+ */
+export interface ISolveTaskResponse {
+  task: Task;
+}
+
+/**
+ * Approve task request body
+ */
+export interface IApproveTaskRequest {
+  taskId: string;
+}
+
+/**
+ * Approve task response
+ */
+export interface IApproveTaskResponse {
+  task: Task;
 }
 
 /**
@@ -118,5 +142,7 @@ export interface ITasksContext {
   setError: (error: string) => void;
   clearError: () => void;
   createTask: (dto: ITaskDto) => Promise<Task>;
-  getMyTasks: () => Promise<Task[]>;
+  getFamilyTasks: (familyId: string) => Promise<Task[]>;
+  solveTask: (taskId: string) => Promise<Task>;
+  approveTask: (taskId: string) => Promise<Task>;
 }

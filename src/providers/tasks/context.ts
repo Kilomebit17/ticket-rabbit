@@ -18,7 +18,13 @@ export const TasksContext = createContext<ITasksContext>({
   createTask: async () => {
     throw new Error('TasksProvider not initialized');
   },
-  getMyTasks: async () => {
+  getFamilyTasks: async () => {
+    throw new Error('TasksProvider not initialized');
+  },
+  solveTask: async () => {
+    throw new Error('TasksProvider not initialized');
+  },
+  approveTask: async () => {
     throw new Error('TasksProvider not initialized');
   },
 });

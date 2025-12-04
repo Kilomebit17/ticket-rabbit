@@ -9,12 +9,31 @@ import type {
   IRespondInviteResponse,
   IBackendFamilyInvite,
   IGetFamilyResponse,
+  IBackendFamily,
 } from './types';
 import { EFamilyActionType } from './types';
 import initialState from './state';
 import { reducer } from './reducer';
 import { useHttpClient } from '@/providers/http-client';
 import { ERROR_MESSAGES, LOG_MESSAGES } from '@/constants';
+
+/**
+ * Transform backend family to local Family format
+ * Backend returns dates as ISO strings, we convert to timestamps
+ */
+const transformBackendFamily = (backendFamily: IBackendFamily): Family => {
+  return {
+    id: backendFamily.id,
+    name: backendFamily.name,
+    creatorId: backendFamily.creatorId,
+    members: backendFamily.members,
+    tasks: backendFamily.tasks,
+    createdAt: new Date(backendFamily.createdAt).getTime(),
+    updatedAt: backendFamily.updatedAt
+      ? new Date(backendFamily.updatedAt).getTime()
+      : undefined,
+  };
+};
 
 /**
  * Transform backend invite to local FamilyInvite format
@@ -151,7 +170,7 @@ export const useFamilyService = (): IFamilyContext => {
         const response = await httpClient.get<IGetFamilyResponse>(
           `/family/${familyId}`
         );
-        const fetchedFamily = response.data.family;
+        const fetchedFamily = transformBackendFamily(response.data.family);
         setFamily(fetchedFamily);
         return fetchedFamily;
       } catch (error: unknown) {
@@ -191,7 +210,10 @@ export const useFamilyService = (): IFamilyContext => {
         });
         // If family was created, update state
         if (result.family) {
-          setFamily(result.family);
+          const transformedFamily = transformBackendFamily(result.family);
+          setFamily(transformedFamily);
+          // Return original backend format in response
+          return result;
         }
         return result;
       } catch (error: unknown) {

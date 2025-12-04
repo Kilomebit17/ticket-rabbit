@@ -5,8 +5,9 @@ import {
   CREATE_FAMILY_TEXT,
   FAMILY_REQUEST_STATUS,
   SEX_VALUES,
-  SEX_EMOJIS,
 } from "@/constants";
+import { CheckIcon } from "@/components/Icons";
+import UserCard from "@/components/UserCard";
 import styles from "./CreateFamilyModal.module.scss";
 
 import { useUsers } from "@/providers/users";
@@ -183,50 +184,37 @@ const CreateFamilyModal = ({
                 : null;
 
               return (
-                <div key={user.id} className={styles.userItem}>
-                  <div className={styles.userInfo}>
-                    {user.photoUrl ? (
-                      <img
-                        src={user.photoUrl}
-                        alt={user.name}
-                        className={styles.userAvatar}
-                      />
-                    ) : (
-                      <span className={styles.userEmoji}>
-                        {user.sex === SEX_VALUES.MAN
-                          ? SEX_EMOJIS.MAN
-                          : SEX_EMOJIS.WOMAN}
-                      </span>
-                    )}
-                    <div>
-                      <div className={styles.userName}>{user.name}</div>
-                      <div className={styles.userSex}>{user.sex}</div>
-                    </div>
-                  </div>
-                  <div className={styles.userActions}>
-                    {hasIncoming && incomingRequest ? (
-                      <button
-                        onClick={() => handleAcceptRequest(incomingRequest)}
-                        className={styles.acceptButton}
-                        type="button"
-                      >
-                        {CREATE_FAMILY_TEXT.BUTTON_ACCEPT_REQUEST}
-                      </button>
-                    ) : hasRequest ? (
-                      <span className={styles.requestSent}>
-                        {CREATE_FAMILY_TEXT.REQUEST_SENT}
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => handleSendRequest(user)}
-                        className={styles.sendButton}
-                        type="button"
-                      >
-                        {CREATE_FAMILY_TEXT.BUTTON_SEND_REQUEST}
-                      </button>
-                    )}
-                  </div>
-                </div>
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  className={styles.userItem}
+                  actions={
+                    <>
+                      {hasIncoming && incomingRequest ? (
+                        <button
+                          onClick={() => handleAcceptRequest(incomingRequest)}
+                          className={styles.acceptButton}
+                          type="button"
+                        >
+                          {CREATE_FAMILY_TEXT.BUTTON_ACCEPT_REQUEST}
+                        </button>
+                      ) : hasRequest ? (
+                        <span className={styles.requestSent}>
+                          <CheckIcon className={styles.checkIcon} />
+                          {CREATE_FAMILY_TEXT.REQUEST_SENT}
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleSendRequest(user)}
+                          className={styles.sendButton}
+                          type="button"
+                        >
+                          {CREATE_FAMILY_TEXT.BUTTON_SEND_REQUEST}
+                        </button>
+                      )}
+                    </>
+                  }
+                />
               );
             })
           )}

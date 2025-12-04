@@ -174,17 +174,10 @@
 }
 
 .userItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $spacing-md $spacing-lg;
-  border: 1px solid $border-color;
-  border-radius: $radius-md;
   margin-bottom: $spacing-sm;
-  background-color: $surface;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: default;
   animation: slideIn 0.3s ease-out backwards;
+  border: 1px solid $border-color;
+  background-color: $surface;
 
   @for $i from 1 through 10 {
     &:nth-child(#{$i}) {
@@ -203,10 +196,6 @@
       rgba(249, 250, 251, 1) 100%
     );
   }
-
-  &:active {
-    transform: translateY(0);
-  }
 }
 
 @keyframes slideIn {
@@ -218,60 +207,6 @@
     opacity: 1;
     transform: translateX(0);
   }
-}
-
-.userInfo {
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
-  flex: 1;
-}
-
-.userEmoji {
-  font-size: 32px;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  display: inline-block;
-}
-
-.userItem:hover .userEmoji {
-  transform: scale(1.1) rotate(5deg);
-}
-
-.userAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.userItem:hover .userAvatar {
-  transform: scale(1.1);
-}
-
-.userName {
-  font-weight: 600;
-  color: $text-primary;
-  margin-bottom: $spacing-xs;
-  letter-spacing: -0.01em;
-  transition: color 0.2s;
-}
-
-.userItem:hover .userName {
-  color: $primary-color;
-}
-
-.userSex {
-  font-size: 14px;
-  color: $text-secondary;
-  text-transform: capitalize;
-  transition: color 0.2s;
-}
-
-.userActions {
-  display: flex;
-  gap: $spacing-sm;
-  align-items: center;
 }
 
 .sendButton {
@@ -396,11 +331,10 @@
   display: flex;
   align-items: center;
   gap: $spacing-xs;
+}
 
-  &::before {
-    content: '✓';
-    color: $success-color;
-    font-weight: bold;
-  }
+.checkIcon {
+  color: $success-color;
+  font-size: 16px;
 }
 

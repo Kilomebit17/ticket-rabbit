@@ -120,10 +120,17 @@
 
 .approvedBadge {
   flex: 1;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
   padding: $spacing-sm $spacing-md;
   color: $success-color;
   font-weight: 600;
   font-size: 14px;
+}
+
+.checkIcon {
+  font-size: 16px;
 }
 

@@ -1,5 +1,7 @@
 import type { FamilyInvite } from '@/types';
-import { DASHBOARD_TEXT, SEX_VALUES, SEX_EMOJIS } from '@/constants';
+import { DASHBOARD_TEXT } from '@/constants';
+import { EnvelopeIcon } from '@/components/Icons';
+import UserCard from '@/components/UserCard';
 import styles from './PendingInvites.module.scss';
 
 interface PendingInvitesProps {
@@ -22,62 +24,47 @@ const PendingInvites = ({
   return (
     <div className={styles.invitesCard}>
       <div className={styles.invitesHeader}>
-        <div className={styles.invitesIcon}>📬</div>
+        <div className={styles.invitesIcon}><EnvelopeIcon /></div>
         <div className={styles.invitesTitle}>
           <h3 className={styles.invitesTitleText}>{DASHBOARD_TEXT.INVITES_TITLE}</h3>
           <p className={styles.invitesSubtitle}>{DASHBOARD_TEXT.INVITES_SUBTITLE}</p>
         </div>
       </div>
       <div className={styles.invitesList}>
-        {invites.map((invite) => (
-          <div key={invite.id} className={styles.inviteItem}>
-            <div className={styles.inviteInfo}>
-              <div className={styles.inviteAvatar}>
-                {invite.fromUser?.photoUrl ? (
-                  <img
-                    src={invite.fromUser.photoUrl}
-                    alt={invite.fromUser.name || 'User'}
-                    className={styles.avatarImage}
-                  />
-                ) : (
-                  <span>
-                    {invite.fromUser?.sex === SEX_VALUES.MAN
-                      ? SEX_EMOJIS.MAN
-                      : SEX_EMOJIS.WOMAN}
-                  </span>
-                )}
-              </div>
-              <div className={styles.inviteDetails}>
-                <span className={styles.inviteFrom}>
-                  {DASHBOARD_TEXT.INVITE_FROM}
-                </span>
-                <span className={styles.inviteName}>
-                  {invite.fromUser?.name || 'Unknown User'}
-                </span>
-              </div>
-            </div>
-            <div className={styles.inviteActions}>
-              <button
-                onClick={() => onAccept(invite.id)}
-                className={styles.acceptButton}
-                type="button"
-                disabled={isLoading}
-                aria-label={`Accept invite from ${invite.fromUser?.name || 'user'}`}
-              >
-                {DASHBOARD_TEXT.BUTTON_ACCEPT}
-              </button>
-              <button
-                onClick={() => onReject(invite.id)}
-                className={styles.rejectButton}
-                type="button"
-                disabled={isLoading}
-                aria-label={`Reject invite from ${invite.fromUser?.name || 'user'}`}
-              >
-                {DASHBOARD_TEXT.BUTTON_REJECT}
-              </button>
-            </div>
-          </div>
-        ))}
+        {invites.map((invite) => {
+          if (!invite.fromUser) return null;
+          
+          return (
+            <UserCard
+              key={invite.id}
+              user={invite.fromUser}
+              label={DASHBOARD_TEXT.INVITE_FROM}
+              className={styles.inviteItem}
+              actions={
+                <>
+                  <button
+                    onClick={() => onAccept(invite.id)}
+                    className={styles.acceptButton}
+                    type="button"
+                    disabled={isLoading}
+                    aria-label={`Accept invite from ${invite.fromUser?.name || 'user'}`}
+                  >
+                    {DASHBOARD_TEXT.BUTTON_ACCEPT}
+                  </button>
+                  <button
+                    onClick={() => onReject(invite.id)}
+                    className={styles.rejectButton}
+                    type="button"
+                    disabled={isLoading}
+                    aria-label={`Reject invite from ${invite.fromUser?.name || 'user'}`}
+                  >
+                    {DASHBOARD_TEXT.BUTTON_REJECT}
+                  </button>
+                </>
+              }
+            />
+          );
+        })}
       </div>
     </div>
   );

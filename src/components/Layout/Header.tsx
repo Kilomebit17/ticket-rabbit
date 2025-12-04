@@ -1,5 +1,6 @@
 import { useAuthBalance } from '@/providers/auth';
 import { PROJECT_NAME } from '@/constants';
+import { TicketIcon } from '@/components/Icons';
 import styles from './Header.module.scss';
 
 const Header = (): JSX.Element => {
@@ -9,7 +10,7 @@ const Header = (): JSX.Element => {
     <header className={styles.header}>
       <div className={styles.logo}>{PROJECT_NAME}</div>
       <div className={styles.balance}>
-        <span className={styles.ticketIcon}>🎫</span>
+        <span className={styles.ticketIcon}><TicketIcon /></span>
         <span className={styles.balanceAmount}>{balance}</span>
       </div>
     </header>

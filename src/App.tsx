@@ -19,7 +19,7 @@ import { useTelegramWebApp } from "@/hooks";
 import { PROJECT_NAME } from "@/constants";
 import SexSelection from "./screens/SexSelection";
 import Dashboard from "./screens/Dashboard";
-import Userboard from "./screens/Userboard";
+import Tasks from "./screens/Tasks";
 import Profile from "./screens/Profile";
 import FriendDetail from "./screens/FriendDetail";
 import TryAgain from "./screens/TryAgain";
@@ -83,17 +83,17 @@ const AppContent = (): JSX.Element => {
   }
 
   return (
-    <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/userboard" element={<Userboard />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/friend/:id" element={<FriendDetail />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Layout>
-    </Router>
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/friend/:id" element={<FriendDetail />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Layout>
+      </Router>
   );
 };
 

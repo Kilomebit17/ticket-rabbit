@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
-import { Family, Task, User } from "@/types";
+import { Family } from "@/types";
 import { useCurrentUser, useAuth } from "@/providers/auth";
 import { useFamily } from "@/providers/family";
 import { useTasks } from "@/providers/tasks";
 import { useToast } from "@/providers/toast/hooks";
 import CreateFamilyModal from "@/components/CreateFamilyModal";
-import CreateTaskModal from "@/components/CreateTaskModal";
-import TaskCard from "@/components/TaskCard";
 import PendingInvites from "@/components/PendingInvites";
 import FamilyCard from "@/components/FamilyCard";
-import { DASHBOARD_TEXT, TASK_STATUS, SEX_VALUES, SEX_EMOJIS } from "@/constants";
+import { DASHBOARD_TEXT } from "@/constants";
+import { AvatarIcon } from "@/components/Icons/AvatarIcon";
 import styles from "./Dashboard.module.scss";
 
 const Dashboard = (): JSX.Element => {
@@ -23,20 +22,15 @@ const Dashboard = (): JSX.Element => {
     clearFamily,
     setFamily,
   } = useFamily();
-  const { toastError } = useToast();
   const {
     state: tasksState,
-    createTask: createTaskApi,
-    getMyTasks,
-    setTasks,
+    getFamilyTasks,
   } = useTasks();
+  const { toastError } = useToast();
   const [showCreateFamily, setShowCreateFamily] = useState(false);
-  const [showCreateTask, setShowCreateTask] = useState(false);
-  const [familyMember, setFamilyMember] = useState<User | null>(null);
   
-  const tasks = tasksState.tasks;
-
   const family = familyState.family;
+  const tasks = tasksState.tasks;
 
   const getFamilyInvites = async (): Promise<void> => {
     try {
@@ -52,18 +46,26 @@ const Dashboard = (): JSX.Element => {
       console.error("Failed to load family:", error);
     }
   };
+
+  const loadFamilyTasks = async (familyId: string): Promise<void> => {
+    try {
+      await getFamilyTasks(familyId);
+    } catch (error) {
+      console.error("Failed to load tasks:", error);
+    }
+  };
+
   const init = async (): Promise<void> => {
     if (!currentUser) return;
     const familyId = currentUser.familyId;
 
     if (!familyId) {
       clearFamily();
-
       getFamilyInvites();
     }
 
     if (familyId) {
-      getFamilyData(familyId);
+      await getFamilyData(familyId);
     }
   };
 
@@ -71,50 +73,20 @@ const Dashboard = (): JSX.Element => {
     init();
   }, [currentUser?.familyId]);
 
-  // Handle family data when it's loaded
+  // Load tasks when family is loaded
   useEffect(() => {
-    if (family && currentUser) {
-      // Fetch tasks for the current user
-      const fetchTasks = async (): Promise<void> => {
-        try {
-          await getMyTasks();
-        } catch (error) {
-          console.error("Failed to load tasks:", error);
-        }
-      };
-      fetchTasks();
-
-      // Get the other family member
-      const otherMemberId = family.members.find(
-        (id: string) => id !== currentUser.id
-      );
-      if (otherMemberId) {
-        // TEMP: Replace with API call
-        const member: User | null = null; // storage.getUserById(otherMemberId);
-        setFamilyMember(member);
-      }
-    } else {
-      // Clear tasks when there's no family
-      setTasks([]);
+    if (family?.id) {
+      loadFamilyTasks(family.id);
     }
-  }, [family, currentUser, getMyTasks, setTasks]);
+  }, [family?.id]);
 
-  const handleCreateFamily = () => {
+  const handleCreateFamily = (): void => {
     setShowCreateFamily(true);
   };
 
-  const handleFamilyCreated = (newFamily: Family) => {
+  const handleFamilyCreated = (newFamily: Family): void => {
     setFamily(newFamily);
     setShowCreateFamily(false);
-    // Refresh family member
-    const otherMemberId = newFamily.members.find(
-      (id) => id !== currentUser!.id
-    );
-    if (otherMemberId) {
-      // TEMP: Replace with API call
-      const member = null; // storage.getUserById(otherMemberId);
-      setFamilyMember(member);
-    }
   };
 
   const handleAcceptInvite = async (inviteId: string): Promise<void> => {
@@ -140,65 +112,6 @@ const Dashboard = (): JSX.Element => {
     }
   };
 
-  const handleCreateTask = async (taskName: string, price: number): Promise<void> => {
-    if (!family || !currentUser) return;
-
-    try {
-      await createTaskApi({
-        familyId: family.id,
-        name: taskName,
-        price,
-      });
-      setShowCreateTask(false);
-    } catch (error) {
-      console.error("Failed to create task:", error);
-      toastError("Failed to create task. Please try again.");
-    }
-  };
-
-  const handleTaskUpdate = (updatedTask: Task) => {
-    // TODO: Replace with API call when update endpoint is available
-    // For now, update local state through provider
-    // Note: This will be replaced when update task API is implemented
-    setTasks(tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
-
-    // If task was approved, update user balance
-    if (updatedTask.status === TASK_STATUS.APPROVED && updatedTask.solverId) {
-      // Note: User balance is managed by the backend API
-      // The auth state will be updated when the user data is refreshed
-    }
-  };
-
-  const handleSolveTask = (taskId: string) => {
-    if (!currentUser || !family) return;
-
-    const task = tasks.find((t) => t.id === taskId);
-    if (!task || task.solverId) return;
-
-    const updatedTask: Task = {
-      ...task,
-      solverId: currentUser.id,
-      status: TASK_STATUS.PENDING,
-      solvedAt: Date.now(),
-    };
-
-    handleTaskUpdate(updatedTask);
-  };
-
-  const handleApproveTask = (taskId: string) => {
-    if (!currentUser) return;
-
-    const task = tasks.find((t) => t.id === taskId);
-    if (!task || task.creatorId !== currentUser.id) return;
-
-    const updatedTask: Task = {
-      ...task,
-      status: TASK_STATUS.APPROVED,
-      approvedAt: Date.now(),
-    };
-
-    handleTaskUpdate(updatedTask);
-  };
 
   if (!currentUser) {
     return <div>{DASHBOARD_TEXT.LOADING}</div>;
@@ -259,9 +172,9 @@ const Dashboard = (): JSX.Element => {
                             />
                           ) : (
                             <span>
-                              {invite.toUser?.sex === SEX_VALUES.MAN
-                                ? SEX_EMOJIS.MAN
-                                : SEX_EMOJIS.WOMAN}
+                              {invite.toUser?.sex && (
+                                <AvatarIcon sex={invite.toUser.sex} />
+                              )}
                             </span>
                           )}
                         </div>
@@ -298,52 +211,17 @@ const Dashboard = (): JSX.Element => {
         </>
       )}
 
-      {family && (
+      {family && currentUser && (
         <>
           <div className={styles.header}>
             <h2 className={styles.title}>{DASHBOARD_TEXT.TITLE}</h2>
           </div>
 
-          {familyMember && (
-            <FamilyCard
-              currentUser={currentUser}
-              familyMember={familyMember}
-              tasks={tasks}
-            />
-          )}
-
-          <button
-            onClick={() => setShowCreateTask(true)}
-            className={styles.createTaskButton}
-          >
-            <span className={styles.buttonIcon}>+</span>
-            <span>{DASHBOARD_TEXT.BUTTON_CREATE_TASK}</span>
-          </button>
-
-          <div className={styles.tasksSection}>
-            <h3 className={styles.sectionTitle}>
-              {DASHBOARD_TEXT.SECTION_TASKS}
-            </h3>
-            {tasks.length === 0 && (
-              <div className={styles.noTasks}>
-                <p>{DASHBOARD_TEXT.NO_TASKS}</p>
-              </div>
-            )}
-            {tasks.length > 0 && (
-              <div className={styles.tasksList}>
-                {tasks.map((task) => (
-                  <TaskCard
-                    key={task.id}
-                    task={task}
-                    currentUser={currentUser}
-                    familyMember={familyMember}
-                    onSolve={handleSolveTask}
-                    onApprove={handleApproveTask}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+          <FamilyCard
+            family={family}
+            currentUser={currentUser}
+            tasks={tasks}
+          />
         </>
       )}
 
@@ -352,13 +230,6 @@ const Dashboard = (): JSX.Element => {
           currentUser={currentUser}
           onClose={() => setShowCreateFamily(false)}
           onFamilyCreated={handleFamilyCreated}
-        />
-      )}
-
-      {showCreateTask && (
-        <CreateTaskModal
-          onClose={() => setShowCreateTask(false)}
-          onCreate={handleCreateTask}
         />
       )}
     </div>

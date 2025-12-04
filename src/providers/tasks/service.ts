@@ -4,7 +4,9 @@ import type {
   ITasksContext,
   ITaskDto,
   ICreateTaskResponse,
-  IGetTasksResponse,
+  IGetFamilyTasksResponse,
+  ISolveTaskResponse,
+  IApproveTaskResponse,
 } from "./types";
 import { ETasksActionType } from "./types";
 import initialState from "./state";
@@ -15,13 +17,63 @@ import { ERROR_MESSAGES, LOG_MESSAGES } from "@/constants";
 /**
  * Transform backend task to local Task format
  * Backend returns dates as ISO strings, we convert to timestamps
+ * Backend returns familyId and creatorId as objects, not strings
  */
 const transformBackendTask = (backendTask: any): Task => {
+  // Transform familyId from object to Family format
+  const familyId = typeof backendTask.familyId === 'object' 
+    ? {
+        id: backendTask.familyId.id,
+        name: backendTask.familyId.name,
+        creatorId: typeof backendTask.familyId.creatorId === 'object' 
+          ? backendTask.familyId.creatorId.id 
+          : backendTask.familyId.creatorId,
+        members: Array.isArray(backendTask.familyId.members) && backendTask.familyId.members.length > 0 && typeof backendTask.familyId.members[0] === 'object'
+          ? backendTask.familyId.members
+          : [], // If members are IDs, we'll need to fetch them separately
+        tasks: backendTask.familyId.tasks || [],
+        createdAt: new Date(backendTask.familyId.createdAt).getTime(),
+        updatedAt: backendTask.familyId.updatedAt
+          ? new Date(backendTask.familyId.updatedAt).getTime()
+          : undefined,
+      }
+    : { id: backendTask.familyId } as any; // Fallback for string IDs
+
+  // Transform creatorId from object to User format
+  const creatorId = typeof backendTask.creatorId === 'object'
+    ? {
+        id: backendTask.creatorId.id,
+        name: backendTask.creatorId.name,
+        sex: backendTask.creatorId.sex,
+        balance: backendTask.creatorId.balance || 0,
+        familyId: Array.isArray(backendTask.creatorId.families) && backendTask.creatorId.families.length > 0
+          ? backendTask.creatorId.families[0]
+          : '',
+        photoUrl: backendTask.creatorId.photoUrl,
+      }
+    : { id: backendTask.creatorId } as any; // Fallback for string IDs
+
+  // Transform solverId from object to User format (if present)
+  const solverId = backendTask.solverId
+    ? (typeof backendTask.solverId === 'object'
+        ? {
+            id: backendTask.solverId.id,
+            name: backendTask.solverId.name,
+            sex: backendTask.solverId.sex,
+            balance: backendTask.solverId.balance || 0,
+            familyId: Array.isArray(backendTask.solverId.families) && backendTask.solverId.families.length > 0
+              ? backendTask.solverId.families[0]
+              : '',
+            photoUrl: backendTask.solverId.photoUrl,
+          }
+        : { id: backendTask.solverId } as any)
+    : undefined;
+
   return {
     id: backendTask.id,
-    familyId: backendTask.familyId,
-    creatorId: backendTask.creatorId,
-    solverId: backendTask.solverId || undefined,
+    familyId,
+    creatorId,
+    solverId,
     name: backendTask.name,
     price: backendTask.price,
     status: backendTask.status,
@@ -108,28 +160,91 @@ export const useTasksService = (): ITasksContext => {
   );
 
   /**
-   * Get current user's tasks
+   * Get family tasks by family ID
    */
-  const getMyTasks = useCallback(async (): Promise<Task[]> => {
-    setLoading(true);
-    try {
-      const response = await httpClient.get<IGetTasksResponse>("/task/my");
-      const tasks = transformBackendTasks(response.data.tasks.created || []);
-      setTasks(tasks);
-      return tasks;
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : ERROR_MESSAGES.FAILED_TO_GET_TASKS;
-      setError(errorMessage);
-      console.error(LOG_MESSAGES.ERROR, error);
-      setTasks([]);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [httpClient, setLoading, setTasks, setError]);
+  const getFamilyTasks = useCallback(
+    async (familyId: string): Promise<Task[]> => {
+      setLoading(true);
+      try {
+        const response = await httpClient.get<IGetFamilyTasksResponse>(
+          `/task/family/${familyId}`
+        );
+        const tasks = transformBackendTasks(response.data.tasks || []);
+        setTasks(tasks);
+        return tasks;
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : ERROR_MESSAGES.FAILED_TO_GET_TASKS;
+        setError(errorMessage);
+        console.error(LOG_MESSAGES.ERROR, error);
+        setTasks([]);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [httpClient, setLoading, setTasks, setError]
+  );
+
+  /**
+   * Solve a task
+   */
+  const solveTask = useCallback(
+    async (taskId: string): Promise<Task> => {
+      setLoading(true);
+      try {
+        const response = await httpClient.post<ISolveTaskResponse>(
+          "/task/solve",
+          { taskId }
+        );
+        const task = transformBackendTask(response.data.task);
+        updateTask(task);
+        return task;
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : ERROR_MESSAGES.FAILED_TO_SOLVE_TASK;
+        setError(errorMessage);
+        console.error(LOG_MESSAGES.ERROR, error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [httpClient, setLoading, updateTask, setError]
+  );
+
+  /**
+   * Approve a task
+   */
+  const approveTask = useCallback(
+    async (taskId: string): Promise<Task> => {
+      setLoading(true);
+      try {
+        const response = await httpClient.post<IApproveTaskResponse>(
+          "/task/approve",
+          { taskId }
+        );
+        const task = transformBackendTask(response.data.task);
+        updateTask(task);
+        return task;
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : ERROR_MESSAGES.FAILED_TO_APPROVE_TASK;
+        setError(errorMessage);
+        console.error(LOG_MESSAGES.ERROR, error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [httpClient, setLoading, updateTask, setError]
+  );
 
   return {
     state,
@@ -141,6 +256,8 @@ export const useTasksService = (): ITasksContext => {
     setError,
     clearError,
     createTask,
-    getMyTasks,
+    getFamilyTasks,
+    solveTask,
+    approveTask,
   };
 };

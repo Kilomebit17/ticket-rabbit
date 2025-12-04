@@ -134,14 +134,27 @@ export interface IRespondInviteRequest {
  */
 export interface IRespondInviteResponse {
   invite: FamilyInvite;
-  family?: Family;
+  family?: IBackendFamily;
+}
+
+/**
+ * Backend family structure (raw from API)
+ */
+export interface IBackendFamily {
+  id: string;
+  name: string;
+  creatorId: string;
+  members: User[];
+  tasks: string[];
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
 }
 
 /**
  * Get family response
  */
 export interface IGetFamilyResponse {
-  family: Family;
+  family: IBackendFamily;
 }
 
 /**

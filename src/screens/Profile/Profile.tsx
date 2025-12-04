@@ -3,7 +3,9 @@ import { User } from '@/types';
 import { formatDate, copyToClipboard } from '@/utils/helpers';
 import { useCurrentUser, useAuthLoading } from '@/providers/auth';
 import { useFamily } from '@/providers/family';
-import { SEX_VALUES, SEX_EMOJIS, DASHBOARD_TEXT, EXTERNAL_URLS } from '@/constants';
+import { SEX_VALUES, DASHBOARD_TEXT, EXTERNAL_URLS } from '@/constants';
+import { TicketIcon } from '@/components/Icons';
+import { AvatarIcon } from '@/components/Icons/AvatarIcon';
 import { useToast } from '@/providers/toast/hooks';
 import styles from './Profile.module.scss';
 
@@ -63,13 +65,11 @@ const Profile = (): JSX.Element => {
   useEffect(() => {
     if (family && currentUser) {
       // Get the other family member
-      const otherMemberId = family.members.find(
-        (id: string) => id !== currentUser.id
+      const otherMember = family.members.find(
+        (member: User) => member.id !== currentUser.id
       );
-      if (otherMemberId) {
-        // TEMP: Replace with API call
-        const member: User | null = null; // storage.getUserById(otherMemberId);
-        setFamilyMember(member);
+      if (otherMember) {
+        setFamilyMember(otherMember);
       }
     } else if (!family) {
       setFamilyMember(null);
@@ -113,7 +113,7 @@ const Profile = (): JSX.Element => {
               />
             ) : (
               <span className={styles.emoji}>
-                {currentUser.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN}
+                <AvatarIcon sex={currentUser.sex} />
               </span>
             )}
           </div>
@@ -129,7 +129,7 @@ const Profile = (): JSX.Element => {
             <div className={styles.infoRow}>
               <span className={styles.label}>Balance:</span>
               <span className={styles.balance}>
-                <span className={styles.ticketIcon}>🎫</span>
+                <span className={styles.ticketIcon}><TicketIcon /></span>
                 {currentUser.balance}
               </span>
             </div>
@@ -143,19 +143,28 @@ const Profile = (): JSX.Element => {
           <div className={styles.familyCard}>
             <div className={styles.familyInfo}>
               <div className={styles.infoRow}>
-                <span className={styles.label}>Family ID:</span>
-                <span className={styles.value}>{family.id}</span>
-              </div>
-              <div className={styles.infoRow}>
                 <span className={styles.label}>Created:</span>
                 <span className={styles.value}>{formatDate(family.createdAt)}</span>
               </div>
               {familyMember && (
                 <div className={styles.infoRow}>
                   <span className={styles.label}>Family Member:</span>
-                  <span className={styles.value}>
-                    {familyMember.name} ({familyMember.sex === SEX_VALUES.MAN ? SEX_EMOJIS.MAN : SEX_EMOJIS.WOMAN})
-                  </span>
+                  <div className={styles.familyMemberValue}>
+                    <div className={styles.familyMemberAvatar}>
+                      {familyMember.photoUrl ? (
+                        <img
+                          src={familyMember.photoUrl}
+                          alt={familyMember.name}
+                          className={styles.familyMemberAvatarImage}
+                        />
+                      ) : (
+                        <span className={styles.familyMemberAvatarIcon}>
+                          <AvatarIcon sex={familyMember.sex} />
+                        </span>
+                      )}
+                    </div>
+                    <span className={styles.value}>{familyMember.name}</span>
+                  </div>
                 </div>
               )}
             </div>

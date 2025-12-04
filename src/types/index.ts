@@ -13,15 +13,19 @@ export interface User {
 
 export interface Family {
   id: string;
-  members: string[]; // user IDs
-  createdAt: number;
+  name: string;
+  creatorId: string;
+  members: User[]; // full user objects from API
+  tasks: string[]; // task IDs
+  createdAt: number; // timestamp
+  updatedAt?: number; // timestamp
 }
 
 export interface Task {
   id: string;
-  familyId: string;
-  creatorId: string;
-  solverId?: string;
+  familyId: Family;
+  creatorId: User;
+  solverId?: User;
   name: string;
   price: number; // in tickets
   status: TaskStatus;

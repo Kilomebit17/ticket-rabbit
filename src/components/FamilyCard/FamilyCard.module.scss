@@ -27,6 +27,7 @@
   align-items: center;
   gap: $spacing-md;
   margin-bottom: $spacing-lg;
+  justify-content: space-between;
 }
 
 .familyIcon {
@@ -38,6 +39,7 @@
   justify-content: center;
   background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
   border-radius: 50%;
+  color: $surface;
   box-shadow: $shadow-sm;
 }
 
@@ -59,10 +61,24 @@
   font-weight: 500;
 }
 
+.togetherTime {
+  flex-shrink: 0;
+}
+
+.togetherTimeNumber {
+  font-size: 48px;
+  font-weight: 800;
+  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  line-height: 1;
+}
+
 .familyMembers {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: $spacing-md;
   margin-bottom: $spacing-lg;
   padding: $spacing-md;
